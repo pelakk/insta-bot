@@ -1302,7 +1302,14 @@ const Instauto = async (db, browser, options) => {
       await sleep(1000);
     } catch (err) {
       logger.info("No login page button, assuming we are on login form");
-      await page.click('button[class="_a9-- _ap36 _a9_0"]');
+      await tryPressButton(
+        await page.$$('button[class="_a9-- _ap36 _a9_0"]'),
+        "Cookie consent button try 1"
+      );
+      await tryPressButton(
+        await page.$$('button[class="_a9-- _ap36 _a9_1"]'),
+        "Cookie consent button try 2"
+      );
       await sleep(1000);
     }
 

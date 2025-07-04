@@ -26,10 +26,10 @@ module.exports = {
         // Target users to follow their followers
         USERS_TO_FOLLOW: "emilka_kk,jakis_influencer1",
       },
-      out_file: "/dev/null", // Wyłączamy standardowe logi
-      error_file: "./logs/ladymcbeth_rells-error.log", // Tylko błędy
-      log_file: "/dev/null", // Wyłączamy combined logi
-      time: true,
+      out_file: "NUL",
+      error_file: "NUL",
+      log_file: "NUL",
+      time: false,
       autorestart: true,
       max_restarts: 10,
       restart_delay: 5000,
@@ -60,10 +60,10 @@ module.exports = {
         // Target users to follow their followers
         USERS_TO_FOLLOW: "natgeo,sam_kolder",
       },
-      out_file: "/dev/null", // Wyłączamy standardowe logi
-      error_file: "./logs/lariberrys-error.log", // Tylko błędy
-      log_file: "/dev/null", // Wyłączamy combined logi
-      time: true,
+      out_file: "NUL",
+      error_file: "NUL",
+      log_file: "NUL",
+      time: false,
       autorestart: true,
       max_restarts: 10,
       restart_delay: 5000,

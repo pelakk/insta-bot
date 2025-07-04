@@ -6,40 +6,16 @@
 const puppeteer = require("puppeteer");
 const proxyChain = require("proxy-chain");
 
-const fs = require("fs");
-const path = require("path");
 const Instauto = require(".");
 
 // Pobierz ID instancji i IP proxy ze zmiennych środowiskowych
 const instanceId = process.env.INSTANCE_ID || "1";
 const proxyIp = process.env.PROXY_IP || "77.47.240.226";
-const instagramUsername = process.env.INSTAGRAM_USERNAME || "unknown";
-
-// Utwórz folder logs jeśli nie istnieje
-if (!fs.existsSync("logs")) {
-  fs.mkdirSync("logs");
-}
 
 // Funkcja do tworzenia loggera dla każdej instancji
 const createLogger = (instanceId) => {
-  const logFile = path.join(
-    "logs",
-    `${instagramUsername.replace(/[^a-zA-Z0-9]/g, "_")}-error.log`
-  );
-
-  const log = (fn, ...args) => {
-    const timestamp = new Date().toISOString();
-    const message = `${timestamp} [Instance ${instanceId}] ${args.join(" ")}`;
-
-    // Zawsze loguj do konsoli
-    console[fn](timestamp, `[Instance ${instanceId}]`, ...args);
-
-    // Zapisuj tylko błędy do pliku
-    if (fn === "error") {
-      fs.appendFileSync(logFile, `${message}\n`);
-    }
-  };
-
+  const log = (fn, ...args) =>
+    console[fn](new Date().toISOString(), `[Instance ${instanceId}]`, ...args);
   return Object.fromEntries(
     ["log", "info", "debug", "error", "trace", "warn"].map((fn) => [
       fn,
