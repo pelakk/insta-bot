@@ -1,25 +1,32 @@
-'use strict';
+"use strict";
 
 // Load environment variables from .env file
-require('dotenv').config();
+require("dotenv").config();
 
-const puppeteer = require('puppeteer'); // eslint-disable-line import/no-extraneous-dependencies
+const puppeteer = require("puppeteer"); // eslint-disable-line import/no-extraneous-dependencies
+const proxyChain = require("proxy-chain");
 
-const Instauto = require('.');
+const Instauto = require(".");
 // or:
 // const Instauto = require('instauto'); // eslint-disable-line import/no-unresolved
 
-// Optional: Custom logger with timestamps
-const log = (fn, ...args) => console[fn](new Date().toISOString(), ...args);
-const logger = Object.fromEntries(
-  ['log', 'info', 'debug', 'error', 'trace', 'warn'].map((fn) => [
-    fn,
-    (...args) => log(fn, ...args),
-  ]),
-);
+// Funkcja do tworzenia loggera dla każdej instancji
+const createLogger = (instanceId) => {
+  const log = (fn, ...args) =>
+    console[fn](new Date().toISOString(), `[Instance ${instanceId}]`, ...args);
+  return Object.fromEntries(
+    ["log", "info", "debug", "error", "trace", "warn"].map((fn) => [
+      fn,
+      (...args) => log(fn, ...args),
+    ])
+  );
+};
+
+// Domyślny logger (używany w options, ale będzie zastąpiony)
+const defaultLogger = createLogger("?");
 
 const options = {
-  cookiesPath: './cookies.json',
+  cookiesPath: "./cookies.json",
 
   username: process.env.INSTAGRAM_USERNAME,
   password: process.env.INSTAGRAM_PASSWORD,
@@ -92,48 +99,46 @@ const options = {
   // If true, will not do any actions (defaults to true)
   dryRun: false,
 
-  logger,
+  logger: defaultLogger,
 };
 
-(async () => {
+// Funkcja do uruchomienia jednej instancji z określonym proxy
+async function runInstance(instanceId, proxyIp) {
   let browser;
+  let newProxyUrl;
 
   try {
+    console.log(`[Instance ${instanceId}] Starting with proxy IP: ${proxyIp}`);
+
+    const oldProxyUrl = `socks5://kamzza:bJXwSnBLy9@${proxyIp}:50101`;
+    newProxyUrl = await proxyChain.anonymizeProxy({
+      url: oldProxyUrl,
+      port: 8000 + instanceId, // Unikalny port dla każdej instancji
+    });
+
     browser = await puppeteer.launch({
-      // set headless: false first if you need to debug and see how it works
       headless: true,
-
       args: [
-        // Needed for docker
-        '--no-sandbox',
-        '--disable-setuid-sandbox',
-
-        // If you need to proxy: (see also https://www.chromium.org/developers/design-documents/network-settings)
-        // '--proxy-server=127.0.0.1:9876',
+        "--no-sandbox",
+        "--disable-setuid-sandbox",
+        `--proxy-server=${newProxyUrl}`,
       ],
     });
 
-    // Create a database where state will be loaded/saved to
+    // Create a database where state will be loaded/saved to (unique for each instance)
     const instautoDb = await Instauto.JSONDB({
-      // Will store a list of all users that have been followed before, to prevent future re-following.
-      followedDbPath: './followed.json',
-      // Will store all unfollowed users here
-      unfollowedDbPath: './unfollowed.json',
-      // Will store all likes here
-      likedPhotosDbPath: './liked-photos.json',
+      followedDbPath: `./followed_${instanceId}.json`,
+      unfollowedDbPath: `./unfollowed_${instanceId}.json`,
+      likedPhotosDbPath: `./liked-photos_${instanceId}.json`,
     });
 
-    const instauto = await Instauto(instautoDb, browser, options);
+    // Stwórz logger specyficzny dla tej instancji
+    const instanceLogger = createLogger(instanceId);
+    const instanceOptions = { ...options, logger: instanceLogger };
 
-    // This can be used to unfollow people:
-    // Will unfollow auto-followed AND manually followed accounts who are not following us back, after some time has passed
-    // The time is specified by config option dontUnfollowUntilTimeElapsed
-    // await instauto.unfollowNonMutualFollowers();
-    // await instauto.sleep(10 * 60 * 1000);
+    const instauto = await Instauto(instautoDb, browser, instanceOptions);
 
-    // Unfollow previously auto-followed users (regardless of whether or not they are following us back)
-    // after a certain amount of days (2 weeks)
-    // Leave room to do following after this too (unfollow 2/3 of maxFollowsPerDay)
+    // Unfollow previously auto-followed users
     const unfollowedCount = await instauto.unfollowOldFollowed({
       ageInDays: 14,
       limit: options.maxFollowsPerDay * (2 / 3),
@@ -141,12 +146,13 @@ const options = {
 
     if (unfollowedCount > 0) await instauto.sleep(10 * 60 * 1000);
 
-    // List of usernames that we should follow the followers of, can be celebrities etc.
-    const usersToFollowFollowersOf = process.env.USERS_TO_FOLLOW != null
-      ? process.env.USERS_TO_FOLLOW.split(',')
-      : [];
+    // List of usernames that we should follow the followers of
+    const usersToFollowFollowersOf =
+      process.env.USERS_TO_FOLLOW != null
+        ? process.env.USERS_TO_FOLLOW.split(",")
+        : [];
 
-    // Now go through each of these and follow a certain amount of their followers
+    // Follow followers
     await instauto.followUsersFollowers({
       usersToFollowFollowersOf,
       maxFollowsTotal: options.maxFollowsPerDay - unfollowedCount,
@@ -157,13 +163,32 @@ const options = {
 
     await instauto.sleep(10 * 60 * 1000);
 
-    console.log('Done running');
-
+    console.log(`[Instance ${instanceId}] Done running`);
     await instauto.sleep(30000);
   } catch (err) {
-    console.error(err);
+    console.error(`[Instance ${instanceId}] Error:`, err);
   } finally {
-    console.log('Closing browser');
+    console.log(`[Instance ${instanceId}] Closing browser`);
     if (browser) await browser.close();
+    if (newProxyUrl) await proxyChain.closeAnonymizedProxy(newProxyUrl, true);
+  }
+}
+
+// Uruchomienie 3 instancji równolegle
+(async () => {
+  console.log("Starting 3 instances with different proxies...");
+
+  const proxyIps = ["77.47.240.226", "82.163.175.153", "161.77.68.134"];
+
+  // Uruchom wszystkie 3 instancje jednocześnie
+  const promises = proxyIps.map((proxyIp, index) =>
+    runInstance(index + 1, proxyIp)
+  );
+
+  try {
+    await Promise.all(promises);
+    console.log("All instances completed successfully!");
+  } catch (err) {
+    console.error("One or more instances failed:", err);
   }
 })();
