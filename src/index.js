@@ -1458,15 +1458,47 @@ const Instauto = async (db, browser, options) => {
   );
 
   try {
-    // eslint-disable-next-line no-underscore-dangle
-    const detectedUsername = await page.evaluate(
-      () => window._sharedData.config.viewer.username
-    );
-    if (detectedUsername) myUsername = detectedUsername;
+    // Try multiple methods to detect username
+    const detectedUsername = await page.evaluate(() => {
+      // Method 1: Old Instagram structure
+      if (window._sharedData && window._sharedData.config && window._sharedData.config.viewer) {
+        return window._sharedData.config.viewer.username;
+      }
+      
+      // Method 2: New Instagram structure
+      if (window.__additionalDataLoaded && window.__additionalDataLoaded['/']) {
+        const data = window.__additionalDataLoaded['/'];
+        if (data && data.entry_data && data.entry_data.ProfilePage && data.entry_data.ProfilePage[0]) {
+          return data.entry_data.ProfilePage[0].graphql.user.username;
+        }
+      }
+      
+      // Method 3: Check for username in page content
+      const usernameElement = document.querySelector('meta[property="og:url"]');
+      if (usernameElement) {
+        const url = usernameElement.getAttribute('content');
+        const match = url.match(/instagram\.com\/([^\/]+)/);
+        if (match) return match[1];
+      }
+      
+      return null;
+    });
+    
+    if (detectedUsername) {
+      myUsername = detectedUsername;
+      logger.log(`Detected username: ${detectedUsername}`);
+    } else {
+      logger.warn("Could not detect username automatically");
+    }
   } catch (err) {
     logger.error("Failed to detect username", err);
   }
 
+  if (!myUsername) {
+    logger.warn("Could not detect username, using username from config");
+    myUsername = options.username;
+  }
+  
   if (!myUsername) {
     throw new Error("Don't know what's my username");
   }

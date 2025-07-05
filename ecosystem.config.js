@@ -8,7 +8,8 @@ module.exports = {
       env: {
         // Instance config
         INSTANCE_ID: "1",
-        PROXY_IP: "77.47.240.226",
+        PROXY_SERVER: "77.47.240.226:50100",
+        PROXY_AUTH: "kamzza:bJXwSnBLy9",
 
         // Instagram account 1
         INSTAGRAM_USERNAME: "ladymcbeth.rells",
@@ -47,7 +48,8 @@ module.exports = {
       env: {
         // Instance config
         INSTANCE_ID: "2",
-        PROXY_IP: "82.163.175.153",
+        PROXY_SERVER: "82.163.175.153:50100",
+        PROXY_AUTH: "kamzza:bJXwSnBLy9",
 
         // Instagram account 2 (RÓŻNE KONTO!)
         INSTAGRAM_USERNAME: "lariberrys",
