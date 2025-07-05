@@ -67,8 +67,6 @@ const options = {
 
   excludeUsers: [],
 
-  dryRun: false,
-
   logger,
 };
 

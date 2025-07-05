@@ -96,9 +96,6 @@ const options = {
   // Usernames that we should not touch, e.g. your friends and actual followings
   excludeUsers: [],
 
-  // If true, will not do any actions (defaults to true)
-  dryRun: false,
-
   logger: defaultLogger,
 };
 

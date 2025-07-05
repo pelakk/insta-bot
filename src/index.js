@@ -62,8 +62,6 @@ const Instauto = async (db, browser, options) => {
 
     excludeUsers = [],
 
-    dryRun = true,
-
     screenshotOnError = false,
     screenshotsPath = ".",
 
@@ -191,8 +189,7 @@ const Instauto = async (db, browser, options) => {
   const sleepFixed = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
   const sleep = (ms, deviation = 1) => {
-    let msWithDev = (Math.random() * deviation + 1) * ms;
-    if (dryRun) msWithDev = Math.min(3000, msWithDev); // for dryRun, no need to wait so long
+    const msWithDev = (Math.random() * deviation + 1) * ms;
     logger.log("Waiting", (msWithDev / 1000).toFixed(2), "sec");
     return sleepFixed(msWithDev);
   };
@@ -214,21 +211,33 @@ const Instauto = async (db, browser, options) => {
 
   async function checkReachedFollowedUserDayLimit() {
     if (getNumFollowedUsersThisTimeUnit(dayMs) >= maxFollowsPerDay) {
-      logger.log(`⏸️ Daily limit reached (${getNumFollowedUsersThisTimeUnit(dayMs)}/${maxFollowsPerDay}), waiting 10 minutes...`);
+      logger.log(
+        `⏸️ Daily limit reached (${getNumFollowedUsersThisTimeUnit(
+          dayMs
+        )}/${maxFollowsPerDay}), waiting 10 minutes...`
+      );
       await sleep(10 * 60 * 1000);
     }
   }
 
   async function checkReachedFollowedUserHourLimit() {
     if (getNumFollowedUsersThisTimeUnit(hourMs) >= maxFollowsPerHour) {
-      logger.log(`⏸️ Hourly limit reached (${getNumFollowedUsersThisTimeUnit(hourMs)}/${maxFollowsPerHour}), waiting 10 minutes...`);
+      logger.log(
+        `⏸️ Hourly limit reached (${getNumFollowedUsersThisTimeUnit(
+          hourMs
+        )}/${maxFollowsPerHour}), waiting 10 minutes...`
+      );
       await sleep(10 * 60 * 1000);
     }
   }
 
   async function checkReachedLikedUserDayLimit() {
     if (getNumLikesThisTimeUnit(dayMs) >= maxLikesPerDay) {
-      logger.log(`⏸️ Daily like limit reached (${getNumLikesThisTimeUnit(dayMs)}/${maxLikesPerDay}), waiting 10 minutes...`);
+      logger.log(
+        `⏸️ Daily like limit reached (${getNumLikesThisTimeUnit(
+          dayMs
+        )}/${maxLikesPerDay}), waiting 10 minutes...`
+      );
       await sleep(10 * 60 * 1000);
     }
   }
@@ -312,7 +321,9 @@ const Instauto = async (db, browser, options) => {
         // so we check if the page has the user's name on it
         try {
           const elementHandles = await page.$$(
-            `xpath/.//body//main//*[contains(text(),${escapeXpathStr(username)})]`
+            `xpath/.//body//main//*[contains(text(),${escapeXpathStr(
+              username
+            )})]`
           );
           const foundUsernameOnPage = elementHandles.length > 0;
           if (!foundUsernameOnPage) {
@@ -320,8 +331,13 @@ const Instauto = async (db, browser, options) => {
           }
           return foundUsernameOnPage;
         } catch (error) {
-          if (error.message.includes('detached') || error.message.includes('Frame')) {
-            logger.warn(`Detached frame error checking username on page for ${username}`);
+          if (
+            error.message.includes("detached") ||
+            error.message.includes("Frame")
+          ) {
+            logger.warn(
+              `Detached frame error checking username on page for ${username}`
+            );
             return false;
           }
           throw error;
@@ -330,7 +346,10 @@ const Instauto = async (db, browser, options) => {
 
       throw new Error(`Navigate to user failed with status ${status}`);
     } catch (error) {
-      if (error.message.includes('detached') || error.message.includes('Frame')) {
+      if (
+        error.message.includes("detached") ||
+        error.message.includes("Frame")
+      ) {
         logger.warn(`Detached frame error navigating to ${username}`);
         return false;
       }
@@ -387,18 +406,26 @@ const Instauto = async (db, browser, options) => {
     async function getUserDataFromSharedData() {
       try {
         const sharedData = await page.evaluate(() => {
-          if (window._sharedData && window._sharedData.entry_data && window._sharedData.entry_data.ProfilePage) {
+          if (
+            window._sharedData &&
+            window._sharedData.entry_data &&
+            window._sharedData.entry_data.ProfilePage
+          ) {
             return window._sharedData.entry_data.ProfilePage[0].graphql.user;
           }
           return null;
         });
-        
+
         if (sharedData) {
-          logger.log(`Successfully got user data from _sharedData for ${username}`);
+          logger.log(
+            `Successfully got user data from _sharedData for ${username}`
+          );
           return sharedData;
         }
       } catch (err) {
-        logger.warn(`Failed to get user data from _sharedData for ${username}: ${err.message}`);
+        logger.warn(
+          `Failed to get user data from _sharedData for ${username}: ${err.message}`
+        );
       }
       return undefined;
     }
@@ -407,7 +434,9 @@ const Instauto = async (db, browser, options) => {
       try {
         const graphqlData = await page.evaluate(() => {
           // Look for GraphQL data in the page
-          const scripts = document.querySelectorAll('script[type="application/json"]');
+          const scripts = document.querySelectorAll(
+            'script[type="application/json"]'
+          );
           for (const script of scripts) {
             try {
               const data = JSON.parse(script.textContent);
@@ -420,13 +449,15 @@ const Instauto = async (db, browser, options) => {
           }
           return null;
         });
-        
+
         if (graphqlData) {
           logger.log(`Successfully got user data from GraphQL for ${username}`);
           return graphqlData;
         }
       } catch (err) {
-        logger.warn(`Failed to get user data from GraphQL for ${username}: ${err.message}`);
+        logger.warn(
+          `Failed to get user data from GraphQL for ${username}: ${err.message}`
+        );
       }
       return undefined;
     }
@@ -476,7 +507,9 @@ const Instauto = async (db, browser, options) => {
         const json = JSON.parse(await foundResponse.text());
         return json.data.user;
       } catch (err) {
-        logger.warn(`Failed to intercept network request for ${username}: ${err.message}`);
+        logger.warn(
+          `Failed to intercept network request for ${username}: ${err.message}`
+        );
         return undefined;
       } finally {
         clearTimeout(t);
@@ -487,7 +520,7 @@ const Instauto = async (db, browser, options) => {
 
     try {
       await navigateToUserWithCheck(username);
-      
+
       // Try multiple methods to get user data
       let userData = await getUserDataFromPage();
       if (userData) {
@@ -512,7 +545,9 @@ const Instauto = async (db, browser, options) => {
 
       userData = await getUserDataFromInterceptedRequest();
       if (userData) {
-        logger.log(`✅ Got user data for ${username} from network interception method`);
+        logger.log(
+          `✅ Got user data for ${username} from network interception method`
+        );
         userDataCache[username] = normalizeUserData(userData);
         return userDataCache[username];
       }
@@ -521,7 +556,7 @@ const Instauto = async (db, browser, options) => {
       logger.warn(`🔄 All methods failed for ${username}, using fallback data`);
       return normalizeUserData({
         id: "unknown",
-        username: username,
+        username,
         edge_followed_by: { count: 0 },
         edge_follow: { count: 0 },
         is_private: false,
@@ -533,15 +568,17 @@ const Instauto = async (db, browser, options) => {
         profile_pic_url_hd: "",
         external_url: "",
         business_category_name: "",
-        category_name: ""
+        category_name: "",
       });
-
     } catch (error) {
-      if (error.message.includes('detached') || error.message.includes('Frame')) {
+      if (
+        error.message.includes("detached") ||
+        error.message.includes("Frame")
+      ) {
         logger.warn(`Detached frame error accessing profile ${username}`);
         return normalizeUserData({
           id: "unknown",
-          username: username,
+          username,
           edge_followed_by: { count: 0 },
           edge_follow: { count: 0 },
           is_private: false,
@@ -553,14 +590,14 @@ const Instauto = async (db, browser, options) => {
           profile_pic_url_hd: "",
           external_url: "",
           business_category_name: "",
-          category_name: ""
+          category_name: "",
         });
       }
       logger.warn(`Could not access profile ${username}: ${error.message}`);
       // Return a minimal user data object to allow following to continue
       return normalizeUserData({
         id: "unknown",
-        username: username,
+        username,
         edge_followed_by: { count: 0 },
         edge_follow: { count: 0 },
         is_private: false,
@@ -572,7 +609,7 @@ const Instauto = async (db, browser, options) => {
         profile_pic_url_hd: "",
         external_url: "",
         business_category_name: "",
-        category_name: ""
+        category_name: "",
       });
     }
   }
@@ -614,7 +651,7 @@ const Instauto = async (db, browser, options) => {
   async function findButtonWithText(text) {
     // Escape text for XPath
     const escapedText = text.replace(/'/g, "\\'");
-    
+
     // Multiple selectors to handle different Instagram button structures
     const selectors = [
       // Modern Instagram button structure
@@ -632,7 +669,7 @@ const Instauto = async (db, browser, options) => {
       // More generic selector
       `xpath/.//button[contains(.,'${escapedText}')]`,
       // CSS selector as fallback
-      `button:has-text("${text}")`
+      `button:has-text("${text}")`,
     ];
 
     for (const selector of selectors) {
@@ -641,17 +678,21 @@ const Instauto = async (db, browser, options) => {
         if (elementHandles.length > 0) {
           // Verify the element is visible and clickable
           const element = elementHandles[0];
-          const isVisible = await element.evaluate(el => {
+          const isVisible = await element.evaluate((el) => {
             const style = window.getComputedStyle(el);
-            return style.display !== 'none' && 
-                   style.visibility !== 'hidden' && 
-                   style.opacity !== '0' &&
-                   el.offsetWidth > 0 && 
-                   el.offsetHeight > 0;
+            return (
+              style.display !== "none" &&
+              style.visibility !== "hidden" &&
+              style.opacity !== "0" &&
+              el.offsetWidth > 0 &&
+              el.offsetHeight > 0
+            );
           });
-          
+
           if (isVisible) {
-            logger.log(`🔍 Found button with text "${text}" using selector: ${selector}`);
+            logger.log(
+              `🔍 Found button with text "${text}" using selector: ${selector}`
+            );
             return element;
           }
         }
@@ -682,13 +723,13 @@ const Instauto = async (db, browser, options) => {
       async () => {
         let button = await findButtonWithText("Following");
         if (button) return button;
-        
+
         button = await findButtonWithText("Requested");
         if (button) return button;
-        
+
         return null;
       },
-      
+
       // Method 2: Aria-label search
       async () => {
         const selectors = [
@@ -697,26 +738,30 @@ const Instauto = async (db, browser, options) => {
           "xpath/.//header//button[*//*[name()='svg'][@aria-label='Following']]",
           "xpath/.//header//button[*//*[name()='svg'][@aria-label='Requested']]",
           "xpath/.//button[*//span[@aria-label='Following']]",
-          "xpath/.//button[*//span[@aria-label='Requested']]"
+          "xpath/.//button[*//span[@aria-label='Requested']]",
         ];
-        
+
         for (const selector of selectors) {
           try {
             const elementHandles = await page.$$(selector);
             if (elementHandles.length > 0) {
               const element = elementHandles[0];
               // Verify element is visible
-              const isVisible = await element.evaluate(el => {
+              const isVisible = await element.evaluate((el) => {
                 const style = window.getComputedStyle(el);
-                return style.display !== 'none' && 
-                       style.visibility !== 'hidden' && 
-                       style.opacity !== '0' &&
-                       el.offsetWidth > 0 && 
-                       el.offsetHeight > 0;
+                return (
+                  style.display !== "none" &&
+                  style.visibility !== "hidden" &&
+                  style.opacity !== "0" &&
+                  el.offsetWidth > 0 &&
+                  el.offsetHeight > 0
+                );
               });
-              
+
               if (isVisible) {
-                logger.log(`🔍 Found unfollow button using aria-label selector: ${selector}`);
+                logger.log(
+                  `🔍 Found unfollow button using aria-label selector: ${selector}`
+                );
                 return element;
               }
             }
@@ -726,14 +771,21 @@ const Instauto = async (db, browser, options) => {
         }
         return null;
       },
-      
+
       // Method 3: Check for any button that's not "Follow"
       async () => {
         try {
           const allButtons = await page.$$("xpath/.//header//button");
           for (const button of allButtons) {
-            const buttonText = await button.evaluate(el => el.textContent || el.innerText || '');
-            if (buttonText && !buttonText.includes('Follow') && (buttonText.includes('Following') || buttonText.includes('Requested'))) {
+            const buttonText = await button.evaluate(
+              (el) => el.textContent || el.innerText || ""
+            );
+            if (
+              buttonText &&
+              !buttonText.includes("Follow") &&
+              (buttonText.includes("Following") ||
+                buttonText.includes("Requested"))
+            ) {
               logger.log(`🔍 Found unfollow button with text: "${buttonText}"`);
               return button;
             }
@@ -742,7 +794,7 @@ const Instauto = async (db, browser, options) => {
           // Continue to next method
         }
         return null;
-      }
+      },
     ];
 
     // Try each approach
@@ -756,7 +808,7 @@ const Instauto = async (db, browser, options) => {
       }
     }
 
-    logger.warn(`⚠️ Unfollow button not found with any method`);
+    logger.warn("⚠️ Unfollow button not found with any method");
     return undefined;
   }
 
@@ -774,25 +826,37 @@ const Instauto = async (db, browser, options) => {
   // Pre-filter function to filter out unwanted users before getting their data
   function preFilterUsers(users, targetUsername) {
     // Check if pre-filtering is enabled
-    const enablePrefilter = process.env.ENABLE_PREFILTER === 'true' || true; // Default to true
+    const enablePrefilter = process.env.ENABLE_PREFILTER === "true" || true; // Default to true
     if (!enablePrefilter) {
-      logger.log(`⚙️ Pre-filtering disabled, returning all ${users.length} users from @${targetUsername}`);
+      logger.log(
+        `⚙️ Pre-filtering disabled, returning all ${users.length} users from @${targetUsername}`
+      );
       return users;
     }
-    
-    const suspiciousKeywords = ['free', 'bot', 'promo', 'spam', 'fake', 'buy', 'sell', 'follow', 'like'];
-    
-    const passedPrefilter = users.filter(user => {
+
+    const suspiciousKeywords = [
+      "free",
+      "bot",
+      "promo",
+      "spam",
+      "fake",
+      "buy",
+      "sell",
+      "follow",
+      "like",
+    ];
+
+    const passedPrefilter = users.filter((user) => {
       // Skip private accounts
       if (user.is_private) {
         return false;
       }
-      
+
       // Skip accounts without profile picture
       if (!user.profile_pic_url) {
         return false;
       }
-      
+
       // Skip accounts with suspicious usernames
       const username = user.username.toLowerCase();
       for (const keyword of suspiciousKeywords) {
@@ -800,32 +864,34 @@ const Instauto = async (db, browser, options) => {
           return false;
         }
       }
-      
+
       // Skip accounts with very short or very long usernames (potential spam)
       if (username.length < 3 || username.length > 30) {
         return false;
       }
-      
+
       // Skip accounts with numbers only or special characters
       if (/^[0-9]+$/.test(username) || /[^a-zA-Z0-9._]/.test(username)) {
         return false;
       }
-      
+
       return true;
     });
-    
-    logger.log(`⚙️ Pre-filtered ${passedPrefilter.length} of ${users.length} users from @${targetUsername}`);
-    
+
+    logger.log(
+      `⚙️ Pre-filtered ${passedPrefilter.length} of ${users.length} users from @${targetUsername}`
+    );
+
     return passedPrefilter;
   }
 
   async function followUser(username) {
     try {
       await navigateToUserAndGetData(username);
-      
+
       // Wait for page to be fully loaded
       await sleep(2000);
-      
+
       // Retry logic for finding the follow button
       let elementHandle = null;
       let retryCount = 0;
@@ -834,7 +900,9 @@ const Instauto = async (db, browser, options) => {
         elementHandle = await findFollowButton();
         if (!elementHandle) {
           retryCount++;
-          logger.log(`🔄 Retry ${retryCount}/${maxRetries} - Follow button not found for @${username}`);
+          logger.log(
+            `🔄 Retry ${retryCount}/${maxRetries} - Follow button not found for @${username}`
+          );
           await sleep(1000);
         }
       }
@@ -842,98 +910,139 @@ const Instauto = async (db, browser, options) => {
         if (await findUnfollowButton()) {
           logger.log(`⏩ Skipped @${username} – already following this user`);
           await sleep(5000);
-          return { success: false, reason: 'already_following' };
+          return { success: false, reason: "already_following" };
         }
         throw new Error("Follow button not found after retries");
       }
       // Check if button is visible and enabled
-      const isVisible = await elementHandle.evaluate(el => {
+      const isVisible = await elementHandle.evaluate((el) => {
         const style = window.getComputedStyle(el);
-        return style.display !== 'none' && style.visibility !== 'hidden' && style.opacity !== '0' && el.offsetWidth > 0 && el.offsetHeight > 0 && !el.disabled;
+        return (
+          style.display !== "none" &&
+          style.visibility !== "hidden" &&
+          style.opacity !== "0" &&
+          el.offsetWidth > 0 &&
+          el.offsetHeight > 0 &&
+          !el.disabled
+        );
       });
       if (!isVisible) {
-        logger.error(`❌ Follow button for @${username} is not visible or enabled`);
+        logger.error(
+          `❌ Follow button for @${username} is not visible or enabled`
+        );
         throw new Error("Follow button not visible/enabled");
       }
       // Get button text before clicking
-      const buttonTextBefore = await elementHandle.evaluate(el => el.textContent || el.innerText || '');
-      logger.log(`🔍 Found follow button for @${username} with text: "${buttonTextBefore}"`);
-      if (!dryRun) {
-        logger.log(`🖱️ Attempting to click follow button for @${username}`);
-        // Retry click if needed, try both .click() and JS click
-        let clickSuccess = false;
-        let clickErrorMsg = '';
-        for (let i = 0; i < 3; i++) {
+      const buttonTextBefore = await elementHandle.evaluate(
+        (el) => el.textContent || el.innerText || ""
+      );
+      logger.log(
+        `🔍 Found follow button for @${username} with text: "${buttonTextBefore}"`
+      );
+      logger.log(`🖱️ Attempting to click follow button for @${username}`);
+      // Retry click if needed, try both .click() and JS click
+      let clickSuccess = false;
+      let clickErrorMsg = "";
+      for (let i = 0; i < 3; i++) {
+        try {
+          await elementHandle.click();
+          logger.log(
+            `✅ Native click executed for @${username} (attempt ${i + 1})`
+          );
+          clickSuccess = true;
+          break;
+        } catch (clickError) {
+          logger.warn(
+            `⚠️ Native click failed for @${username} (attempt ${i + 1}): ${
+              clickError.message
+            }`
+          );
+          clickErrorMsg = clickError.message;
+          // Try JS click as fallback
           try {
-            await elementHandle.click();
-            logger.log(`✅ Native click executed for @${username} (attempt ${i+1})`);
+            await elementHandle.evaluate((el) => el.click());
+            logger.log(
+              `✅ JS click executed for @${username} (attempt ${i + 1})`
+            );
             clickSuccess = true;
             break;
-          } catch (clickError) {
-            logger.warn(`⚠️ Native click failed for @${username} (attempt ${i+1}): ${clickError.message}`);
-            clickErrorMsg = clickError.message;
-            // Try JS click as fallback
-            try {
-              await elementHandle.evaluate(el => el.click());
-              logger.log(`✅ JS click executed for @${username} (attempt ${i+1})`);
-              clickSuccess = true;
-              break;
-            } catch (jsClickError) {
-              logger.warn(`⚠️ JS click failed for @${username} (attempt ${i+1}): ${jsClickError.message}`);
-              clickErrorMsg = jsClickError.message;
-            }
-            await sleep(1000);
-          }
-        }
-        if (!clickSuccess) {
-          logger.error(`❌ Click failed for @${username} after retries. Last error: ${clickErrorMsg}`);
-          await takeScreenshot();
-          // Log overlay/popups if any
-          const overlays = await page.$$('[role="dialog"], .modal, .overlay');
-          if (overlays.length > 0) {
-            logger.error(`❌ Overlay or popup detected after failed click for @${username}`);
-          }
-          throw new Error("Click failed after retries");
-        }
-        // Wait for potential state changes
-        await sleep(2000);
-        await checkActionBlocked();
-        // Retry logic for verifying button state change
-        let success = false;
-        let buttonTextAfter = '';
-        for (let i = 0; i < 8; i++) { // ~8s
-          const unfollowBtn = await findUnfollowButton();
-          if (unfollowBtn) {
-            buttonTextAfter = await unfollowBtn.evaluate(el => el.textContent || el.innerText || '');
-            logger.log(`🔄 After click, found unfollow button with text: "${buttonTextAfter}" (attempt ${i+1})`);
-            if (/following|requested/i.test(buttonTextAfter)) {
-              success = true;
-              break;
-            }
-          } else {
-            // Check if follow button still exists
-            const stillFollowBtn = await findFollowButton();
-            if (stillFollowBtn) {
-              const stillText = await stillFollowBtn.evaluate(el => el.textContent || el.innerText || '');
-              logger.log(`🔄 After click, still see follow button with text: "${stillText}" (attempt ${i+1})`);
-            }
+          } catch (jsClickError) {
+            logger.warn(
+              `⚠️ JS click failed for @${username} (attempt ${i + 1}): ${
+                jsClickError.message
+              }`
+            );
+            clickErrorMsg = jsClickError.message;
           }
           await sleep(1000);
         }
-        const entry = { username, time: new Date().getTime() };
-        if (!success) {
-          entry.failed = true;
-          logger.error(`❌ Failed to follow @${username} - button did not change to 'Following' or 'Requested' (last text: "${buttonTextAfter}")`);
-          await takeScreenshot();
-          throw new Error("Button did not change to 'Following' or 'Requested'");
-        }
-        await addPrevFollowedUser(entry);
-        logger.log(`✅ Successfully followed @${username} - button changed from "${buttonTextBefore}" to "${buttonTextAfter}"`);
-        return { success: true };
-      } else {
-        logger.log(`🔍 DRY RUN: Would follow @${username}`);
-        return { success: true, dryRun: true };
       }
+      if (!clickSuccess) {
+        logger.error(
+          `❌ Click failed for @${username} after retries. Last error: ${clickErrorMsg}`
+        );
+        await takeScreenshot();
+        // Log overlay/popups if any
+        const overlays = await page.$$('[role="dialog"], .modal, .overlay');
+        if (overlays.length > 0) {
+          logger.error(
+            `❌ Overlay or popup detected after failed click for @${username}`
+          );
+        }
+        throw new Error("Click failed after retries");
+      }
+      // Wait for potential state changes
+      await sleep(2000);
+      await checkActionBlocked();
+      // Retry logic for verifying button state change
+      let success = false;
+      let buttonTextAfter = "";
+      for (let i = 0; i < 8; i++) {
+        // ~8s
+        const unfollowBtn = await findUnfollowButton();
+        if (unfollowBtn) {
+          buttonTextAfter = await unfollowBtn.evaluate(
+            (el) => el.textContent || el.innerText || ""
+          );
+          logger.log(
+            `🔄 After click, found unfollow button with text: "${buttonTextAfter}" (attempt ${
+              i + 1
+            })`
+          );
+          if (/following|requested/i.test(buttonTextAfter)) {
+            success = true;
+            break;
+          }
+        } else {
+          // Check if follow button still exists
+          const stillFollowBtn = await findFollowButton();
+          if (stillFollowBtn) {
+            const stillText = await stillFollowBtn.evaluate(
+              (el) => el.textContent || el.innerText || ""
+            );
+            logger.log(
+              `🔄 After click, still see follow button with text: "${stillText}" (attempt ${
+                i + 1
+              })`
+            );
+          }
+        }
+        await sleep(1000);
+      }
+      const entry = { username, time: new Date().getTime() };
+      if (!success) {
+        entry.failed = true;
+        logger.error(
+          `❌ Failed to follow @${username} - button did not change to 'Following' or 'Requested' (last text: "${buttonTextAfter}")`
+        );
+        await takeScreenshot();
+        throw new Error("Button did not change to 'Following' or 'Requested'");
+      }
+      await addPrevFollowedUser(entry);
+      logger.log(
+        `✅ Successfully followed @${username} - button changed from "${buttonTextBefore}" to "${buttonTextAfter}"`
+      );
+      return { success: true };
     } catch (error) {
       logger.error(`❌ Failed to follow @${username}: ${error.message}`);
       return { success: false, error: error.message };
@@ -961,41 +1070,49 @@ const Instauto = async (db, browser, options) => {
         }
       }
 
-      if (!dryRun) {
-        if (elementHandle) {
-          try {
-            await elementHandle.click();
-            await sleep(1000);
-            const confirmHandle = await findUnfollowConfirmButton();
-            if (confirmHandle) await confirmHandle.click();
+      if (elementHandle) {
+        try {
+          await elementHandle.click();
+          await sleep(1000);
+          const confirmHandle = await findUnfollowConfirmButton();
+          if (confirmHandle) await confirmHandle.click();
 
-            await sleep(5000);
+          await sleep(5000);
 
-            await checkActionBlocked();
+          await checkActionBlocked();
 
-            const elementHandle2 = await findFollowButton();
-            if (!elementHandle2) {
-              throw new Error("Unfollow button did not change state");
-            }
-          } catch (error) {
-            if (error.message.includes('detached') || error.message.includes('Frame')) {
-              logger.warn(`Detached frame error during unfollow for ${username}, marking as no action taken`);
-              res.noActionTaken = true;
-            } else {
-              throw error;
-            }
+          const elementHandle2 = await findFollowButton();
+          if (!elementHandle2) {
+            throw new Error("Unfollow button did not change state");
+          }
+        } catch (error) {
+          if (
+            error.message.includes("detached") ||
+            error.message.includes("Frame")
+          ) {
+            logger.warn(
+              `Detached frame error during unfollow for ${username}, marking as no action taken`
+            );
+            res.noActionTaken = true;
+          } else {
+            throw error;
           }
         }
-
-        await addPrevUnfollowedUser(res);
       }
+
+      await addPrevUnfollowedUser(res);
 
       await sleep(1000);
 
       return res;
     } catch (error) {
-      if (error.message.includes('detached') || error.message.includes('Frame')) {
-        logger.warn(`Detached frame error for ${username}, returning no action taken`);
+      if (
+        error.message.includes("detached") ||
+        error.message.includes("Frame")
+      ) {
+        logger.warn(
+          `Detached frame error for ${username}, returning no action taken`
+        );
         return { username, time: new Date().getTime(), noActionTaken: true };
       }
       throw error;
@@ -1007,17 +1124,20 @@ const Instauto = async (db, browser, options) => {
       // Check for Home button
       const homeButton = await page.$$('xpath/.//*[@aria-label="Home"]');
       if (homeButton.length === 0) return false;
-      
+
       // Additional check - try to access a simple page that requires login
       await page.goto(`${instagramBaseUrl}/accounts/edit/`);
       await sleep(2000);
-      
+
       // Check if we're redirected to login page
       const currentUrl = page.url();
-      if (currentUrl.includes('/accounts/login') || currentUrl.includes('/challenge')) {
+      if (
+        currentUrl.includes("/accounts/login") ||
+        currentUrl.includes("/challenge")
+      ) {
         return false;
       }
-      
+
       return true;
     } catch (error) {
       logger.warn(`Error checking login status: ${error.message}`);
@@ -1029,20 +1149,21 @@ const Instauto = async (db, browser, options) => {
     try {
       const isLoggedInStatus = await isLoggedIn();
       if (!isLoggedInStatus) {
-        logger.error("Not logged in to Instagram. Please check your credentials or sessionid.");
+        logger.error(
+          "Not logged in to Instagram. Please check your credentials or sessionid."
+        );
         return false;
       }
-      
+
       // Additional check - try to access our own profile
       try {
         const myUserData = await navigateToUserAndGetData(myUsername);
         if (myUserData && myUserData.id !== "unknown") {
           logger.log("Login status verified successfully");
           return true;
-        } else {
-          logger.warn("Login status uncertain - could not access own profile");
-          return false;
         }
+        logger.warn("Login status uncertain - could not access own profile");
+        return false;
       } catch (err) {
         logger.warn(`Login verification failed: ${err.message}`);
         return false;
@@ -1096,7 +1217,9 @@ const Instauto = async (db, browser, options) => {
     }
 
     if (i >= maxPages) {
-      logger.warn(`Reached maximum pages limit (${maxPages}), stopping pagination`);
+      logger.warn(
+        `Reached maximum pages limit (${maxPages}), stopping pagination`
+      );
     }
 
     return outUsers;
@@ -1127,11 +1250,13 @@ const Instauto = async (db, browser, options) => {
   async function safeGetUserFollowers(username) {
     try {
       logger.log(`Attempting to get followers for ${username}`);
-      
+
       // First get user data
       const userData = await navigateToUserAndGetData(username);
       if (!userData || userData.id === "unknown") {
-        logger.warn(`Could not get user data for ${username}, skipping followers fetch`);
+        logger.warn(
+          `Could not get user data for ${username}, skipping followers fetch`
+        );
         return [];
       }
 
@@ -1144,12 +1269,17 @@ const Instauto = async (db, browser, options) => {
       // Get followers using the existing generator (returns usernames only)
       const allFollowers = [];
       let followerCount = 0;
-      const maxFollowersToCollect = parseInt(process.env.MAX_FOLLOWERS_TO_COLLECT_PER_TARGET || '50');
+      const maxFollowersToCollect = parseInt(
+        process.env.MAX_FOLLOWERS_TO_COLLECT_PER_TARGET || "50"
+      );
       const timeoutMs = 30000; // 30 second timeout
 
       try {
-        const timeoutPromise = new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('Timeout getting followers')), timeoutMs)
+        const timeoutPromise = new Promise((_, reject) =>
+          setTimeout(
+            () => reject(new Error("Timeout getting followers")),
+            timeoutMs
+          )
         );
 
         const followersPromise = (async () => {
@@ -1160,32 +1290,41 @@ const Instauto = async (db, browser, options) => {
             for (const followerUsername of followersBatch) {
               allFollowers.push(followerUsername);
               followerCount++;
-              
+
               if (followerCount >= maxFollowersToCollect) {
-                logger.log(`Reached max followers limit (${maxFollowersToCollect}) for ${username}`);
+                logger.log(
+                  `Reached max followers limit (${maxFollowersToCollect}) for ${username}`
+                );
                 break;
               }
             }
-            
+
             if (followerCount >= maxFollowersToCollect) break;
           }
         })();
 
         await Promise.race([followersPromise, timeoutPromise]);
       } catch (err) {
-        if (err.message === 'Timeout getting followers') {
-          logger.warn(`Timeout getting followers for ${username}, returning ${allFollowers.length} collected`);
+        if (err.message === "Timeout getting followers") {
+          logger.warn(
+            `Timeout getting followers for ${username}, returning ${allFollowers.length} collected`
+          );
         } else {
-          logger.warn(`Failed to get followers for ${username}: ${err.message}`);
+          logger.warn(
+            `Failed to get followers for ${username}: ${err.message}`
+          );
         }
         // Continue with whatever we collected
       }
 
-      logger.log(`Successfully collected ${allFollowers.length} followers for ${username}`);
+      logger.log(
+        `Successfully collected ${allFollowers.length} followers for ${username}`
+      );
       return allFollowers;
-      
     } catch (error) {
-      logger.error(`Error in safeGetUserFollowers for ${username}: ${error.message}`);
+      logger.error(
+        `Error in safeGetUserFollowers for ${username}: ${error.message}`
+      );
       return [];
     }
   }
@@ -1203,7 +1342,6 @@ const Instauto = async (db, browser, options) => {
 
   /* eslint-disable no-undef */
   async function likeCurrentUserImagesPageCode({
-    dryRun: dryRunIn,
     likeImagesMin,
     likeImagesMax,
     shouldLikeMedia: shouldLikeMediaIn,
@@ -1322,9 +1460,7 @@ const Instauto = async (db, browser, options) => {
         window.instautoOnImageLiked(image.href);
       }
 
-      if (!dryRunIn) {
-        likeImage();
-      }
+      likeImage();
 
       await window.instautoSleep(3000);
 
@@ -1379,7 +1515,6 @@ const Instauto = async (db, browser, options) => {
     }
 
     await page.evaluate(likeCurrentUserImagesPageCode, {
-      dryRun,
       likeImagesMin,
       likeImagesMax,
       shouldLikeMedia,
@@ -1389,73 +1524,98 @@ const Instauto = async (db, browser, options) => {
   // Helper function to normalize user data structure
   function normalizeUserData(userData) {
     if (!userData) return null;
-    
+
     // Map Instagram API structure to consistent format
     const normalized = {
       ...userData,
       // Map edge_followed_by.count to follower_count
-      follower_count: userData.follower_count || userData.edge_followed_by?.count || 0,
-      // Map edge_follow.count to following_count  
-      following_count: userData.following_count || userData.edge_follow?.count || 0,
+      follower_count:
+        userData.follower_count || userData.edge_followed_by?.count || 0,
+      // Map edge_follow.count to following_count
+      following_count:
+        userData.following_count || userData.edge_follow?.count || 0,
       // Ensure edge_followed_by and edge_follow exist for compatibility
-      edge_followed_by: userData.edge_followed_by || { count: userData.follower_count || 0 },
-      edge_follow: userData.edge_follow || { count: userData.following_count || 0 }
+      edge_followed_by: userData.edge_followed_by || {
+        count: userData.follower_count || 0,
+      },
+      edge_follow: userData.edge_follow || {
+        count: userData.following_count || 0,
+      },
     };
-    
+
     return normalized;
   }
 
   // Helper function to get user data with retry logic for zero followers
   async function getUserDataWithRetry(username, maxRetries = 2) {
-    let lastFollowerCount = 0;
+    const lastFollowerCount = 0;
     let retryCount = 0;
-    
+
     for (let attempt = 0; attempt <= maxRetries; attempt++) {
       try {
         const userData = await navigateToUserAndGetData(username);
         if (!userData) {
-          logger.warn(`Could not get user data for @${username} on attempt ${attempt + 1}`);
+          logger.warn(
+            `Could not get user data for @${username} on attempt ${attempt + 1}`
+          );
           continue;
         }
-        
+
         const normalizedData = normalizeUserData(userData);
         const followerCount = normalizedData.follower_count;
-        
-        logger.log(`📊 @${username} - Attempt ${attempt + 1}: ${followerCount} followers`);
-        
+
+        logger.log(
+          `📊 @${username} - Attempt ${attempt + 1}: ${followerCount} followers`
+        );
+
         // If followers count is 0 and this is not the last attempt, retry
         if (followerCount === 0 && attempt < maxRetries) {
           retryCount++;
           const delayMs = 1000 + Math.random() * 1000; // 1000-2000ms random delay
-          logger.log(`🔄 @${username} has 0 followers, retrying in ${Math.round(delayMs)}ms (attempt ${retryCount}/${maxRetries})`);
+          logger.log(
+            `🔄 @${username} has 0 followers, retrying in ${Math.round(
+              delayMs
+            )}ms (attempt ${retryCount}/${maxRetries})`
+          );
           await sleep(delayMs);
           continue;
         }
-        
+
         // If we got a non-zero count or this is the last attempt, return the data
         if (followerCount > 0 || attempt === maxRetries) {
           if (followerCount === 0 && attempt === maxRetries) {
-            logger.warn(`⚠️ @${username} - Final attempt: ${followerCount} followers - marking as pending for manual review`);
+            logger.warn(
+              `⚠️ @${username} - Final attempt: ${followerCount} followers - marking as pending for manual review`
+            );
             // Mark as pending for manual review instead of skipping
-            return { ...normalizedData, _pending_review: true, _retry_attempts: retryCount };
+            return {
+              ...normalizedData,
+              _pending_review: true,
+              _retry_attempts: retryCount,
+            };
           }
-          
+
           if (retryCount > 0) {
-            logger.log(`✅ @${username} - Success after ${retryCount} retries: ${followerCount} followers`);
+            logger.log(
+              `✅ @${username} - Success after ${retryCount} retries: ${followerCount} followers`
+            );
           }
-          
+
           return { ...normalizedData, _retry_attempts: retryCount };
         }
-        
       } catch (error) {
-        logger.error(`❌ Error getting user data for @${username} on attempt ${attempt + 1}: ${error.message}`);
+        logger.error(
+          `❌ Error getting user data for @${username} on attempt ${
+            attempt + 1
+          }: ${error.message}`
+        );
         if (attempt === maxRetries) {
           throw error;
         }
         await sleep(1000);
       }
     }
-    
+
     // This should not be reached, but just in case
     return null;
   }
@@ -1468,81 +1628,104 @@ const Instauto = async (db, browser, options) => {
       // Check if we've already followed this user recently
       if (haveRecentlyFollowedUser(username)) {
         logger.log(`⏩ Skipped @${username} – recently followed`);
-        return { success: false, reason: 'recently_followed' };
+        return { success: false, reason: "recently_followed" };
       }
 
       // Check if we've reached our limits
       if (await checkReachedFollowedUserDayLimit()) {
         logger.log(`⏸️ Daily follow limit reached, skipping @${username}`);
-        return { success: false, reason: 'daily_limit_reached' };
+        return { success: false, reason: "daily_limit_reached" };
       }
 
       if (await checkReachedFollowedUserHourLimit()) {
         logger.log(`⏸️ Hourly follow limit reached, skipping @${username}`);
-        return { success: false, reason: 'hourly_limit_reached' };
+        return { success: false, reason: "hourly_limit_reached" };
       }
 
       // Get user data to check filters
       const userData = await getUserDataWithRetry(username);
       if (!userData) {
         logger.log(`❌ Could not get user data for @${username}`);
-        return { success: false, reason: 'no_user_data' };
+        return { success: false, reason: "no_user_data" };
       }
 
       // Check if user is private and we should skip private users
       if (skipPrivate && userData.is_private) {
         logger.log(`⏩ Skipped @${username} – private account`);
-        return { success: false, reason: 'private_account' };
+        return { success: false, reason: "private_account" };
       }
 
       // Check if user is marked for pending review (zero followers after retries)
       if (userData._pending_review) {
-        logger.log(`⏸️ @${username} marked for pending review (${userData.follower_count} followers after ${userData._retry_attempts} retries)`);
-        return { success: false, reason: 'pending_review', retry_attempts: userData._retry_attempts };
+        logger.log(
+          `⏸️ @${username} marked for pending review (${userData.follower_count} followers after ${userData._retry_attempts} retries)`
+        );
+        return {
+          success: false,
+          reason: "pending_review",
+          retry_attempts: userData._retry_attempts,
+        };
       }
 
       // Check follower/following ratio filters
       const followerCount = userData.follower_count || 0;
       const followingCount = userData.following_count || 0;
-      
-      const minFollowers = parseInt(process.env.FOLLOW_USER_MIN_FOLLOWERS || '50');
-      const maxFollowers = parseInt(process.env.FOLLOW_USER_MAX_FOLLOWERS || '5000');
-      const minFollowing = parseInt(process.env.FOLLOW_USER_MIN_FOLLOWING || '0');
-      const maxFollowing = parseInt(process.env.FOLLOW_USER_MAX_FOLLOWING || '7500');
+
+      const minFollowers = parseInt(
+        process.env.FOLLOW_USER_MIN_FOLLOWERS || "50"
+      );
+      const maxFollowers = parseInt(
+        process.env.FOLLOW_USER_MAX_FOLLOWERS || "5000"
+      );
+      const minFollowing = parseInt(
+        process.env.FOLLOW_USER_MIN_FOLLOWING || "0"
+      );
+      const maxFollowing = parseInt(
+        process.env.FOLLOW_USER_MAX_FOLLOWING || "7500"
+      );
 
       // Only apply minimum followers filter if the count is reliable (not 0 after retries)
       if (followerCount > 0 && followerCount < minFollowers) {
-        logger.log(`⏩ Skipped @${username} – too few followers (${followerCount} < ${minFollowers})`);
-        return { success: false, reason: 'too_few_followers' };
+        logger.log(
+          `⏩ Skipped @${username} – too few followers (${followerCount} < ${minFollowers})`
+        );
+        return { success: false, reason: "too_few_followers" };
       }
 
       if (followerCount > maxFollowers) {
-        logger.log(`⏩ Skipped @${username} – too many followers (${followerCount} > ${maxFollowers})`);
-        return { success: false, reason: 'too_many_followers' };
+        logger.log(
+          `⏩ Skipped @${username} – too many followers (${followerCount} > ${maxFollowers})`
+        );
+        return { success: false, reason: "too_many_followers" };
       }
 
       if (followingCount < minFollowing) {
-        logger.log(`⏩ Skipped @${username} – too few following (${followingCount} < ${minFollowing})`);
-        return { success: false, reason: 'too_few_following' };
+        logger.log(
+          `⏩ Skipped @${username} – too few following (${followingCount} < ${minFollowing})`
+        );
+        return { success: false, reason: "too_few_following" };
       }
 
       if (followingCount > maxFollowing) {
-        logger.log(`⏩ Skipped @${username} – too many following (${followingCount} > ${maxFollowing})`);
-        return { success: false, reason: 'too_many_following' };
+        logger.log(
+          `⏩ Skipped @${username} – too many following (${followingCount} > ${maxFollowing})`
+        );
+        return { success: false, reason: "too_many_following" };
       }
 
       // Attempt to follow the user
       const followResult = await followUser(username);
-      
+
       if (followResult.success) {
         await sleep(30000);
         await throttle();
         return { success: true };
-      } else {
-        return followResult;
       }
+      return followResult;
     } catch (error) {
-      logger.error(`❌ Error in followUserRespectingRestrictions for @${username}: ${error.message}`);
+      logger.error(
+        `❌ Error in followUserRespectingRestrictions for @${username}: ${error.message}`
+      );
       return { success: false, error: error.message };
     }
   }
@@ -1611,8 +1794,13 @@ const Instauto = async (db, browser, options) => {
             });
           }
         } catch (err) {
-          if (err.message.includes('detached') || err.message.includes('Frame')) {
-            logger.warn(`Detached frame error processing follower ${follower}, skipping`);
+          if (
+            err.message.includes("detached") ||
+            err.message.includes("Frame")
+          ) {
+            logger.warn(
+              `Detached frame error processing follower ${follower}, skipping`
+            );
             continue;
           }
           logger.error(`Failed to process follower ${follower}`, err);
@@ -1731,13 +1919,18 @@ const Instauto = async (db, browser, options) => {
             }
 
             await throttle();
-                      } catch (err) {
-              if (err.message.includes('detached') || err.message.includes('Frame')) {
-                logger.warn(`Detached frame error for ${username}, skipping and continuing`);
-              } else {
-                logger.error("Failed to unfollow, continuing with next", err);
-              }
+          } catch (err) {
+            if (
+              err.message.includes("detached") ||
+              err.message.includes("Frame")
+            ) {
+              logger.warn(
+                `Detached frame error for ${username}, skipping and continuing`
+              );
+            } else {
+              logger.error("Failed to unfollow, continuing with next", err);
             }
+          }
         }
       }
     }
@@ -1754,16 +1947,21 @@ const Instauto = async (db, browser, options) => {
 
     for (const username of users) {
       try {
-        const result = await followUserRespectingRestrictions({ username, skipPrivate });
-        
+        const result = await followUserRespectingRestrictions({
+          username,
+          skipPrivate,
+        });
+
         if (result.success) {
           followedCount++;
           logger.log(`✅ Successfully followed @${username} from list`);
         } else {
           skippedCount++;
-          logger.log(`⏩ Skipped @${username}: ${result.reason || 'unknown reason'}`);
+          logger.log(
+            `⏩ Skipped @${username}: ${result.reason || "unknown reason"}`
+          );
         }
-        
+
         // Check if we've reached the limit
         if (limit && followedCount >= limit) {
           logger.log(`⏸️ Reached follow limit (${limit}), stopping`);
@@ -1924,7 +2122,7 @@ const Instauto = async (db, browser, options) => {
     "Accept cookies dialog 2 button 2",
     10000
   );
-  
+
   // Dodatkowa obsługa przycisków cookie consent z klasami CSS
   await tryPressButton(
     await page.$$('button[class="_a9-- _ap36 _a9_0"]'),
@@ -1936,14 +2134,14 @@ const Instauto = async (db, browser, options) => {
     "Cookie consent button _a9_1",
     5000
   );
-  
+
   // Obsługa różnych wariantów przycisków cookie
   await tryPressButton(
     await page.$$('button[class*="_a9--"]'),
     "Any cookie consent button",
     5000
   );
-  
+
   // Obsługa przycisków przez tekst
   await tryPressButton(
     await page.$$('xpath/.//button[contains(text(), "Allow")]'),
@@ -1984,7 +2182,7 @@ const Instauto = async (db, browser, options) => {
         await sleep(1000);
       } catch (err) {
         logger.info("No login page button, assuming we are on login form");
-        
+
         // Obsługa przycisków cookie consent
         await tryPressButton(
           await page.$$('button[class="_a9-- _ap36 _a9_0"]'),
@@ -1994,7 +2192,7 @@ const Instauto = async (db, browser, options) => {
           await page.$$('button[class="_a9-- _ap36 _a9_1"]'),
           "Cookie consent button try 2"
         );
-        
+
         // Dodatkowe warianty przycisków cookie
         await tryPressButton(
           await page.$$('button[class*="_a9--"]'),
@@ -2008,7 +2206,7 @@ const Instauto = async (db, browser, options) => {
           await page.$$('xpath/.//button[contains(text(), "Accept")]'),
           "Accept cookies button"
         );
-        
+
         await sleep(1000);
       }
 
@@ -2076,14 +2274,19 @@ const Instauto = async (db, browser, options) => {
     );
   } else {
     logger.log("Already logged in! Skipping authentication.");
-    
+
     // Force re-login if SHOW_BROWSER is true (for debugging)
-    if (process.env.SHOW_BROWSER === "true" && process.env.FORCE_RELOGIN === "true") {
-      logger.log("FORCE_RELOGIN enabled - forcing re-authentication for debugging");
+    if (
+      process.env.SHOW_BROWSER === "true" &&
+      process.env.FORCE_RELOGIN === "true"
+    ) {
+      logger.log(
+        "FORCE_RELOGIN enabled - forcing re-authentication for debugging"
+      );
       await tryDeleteCookies();
       await page.reload();
       await sleep(3000);
-      
+
       // This will trigger the login process again
       if (!(await isLoggedIn())) {
         logger.log("Forced re-login triggered");
@@ -2117,29 +2320,38 @@ const Instauto = async (db, browser, options) => {
     // Try multiple methods to detect username
     const detectedUsername = await page.evaluate(() => {
       // Method 1: Old Instagram structure
-      if (window._sharedData && window._sharedData.config && window._sharedData.config.viewer) {
+      if (
+        window._sharedData &&
+        window._sharedData.config &&
+        window._sharedData.config.viewer
+      ) {
         return window._sharedData.config.viewer.username;
       }
-      
+
       // Method 2: New Instagram structure
-      if (window.__additionalDataLoaded && window.__additionalDataLoaded['/']) {
-        const data = window.__additionalDataLoaded['/'];
-        if (data && data.entry_data && data.entry_data.ProfilePage && data.entry_data.ProfilePage[0]) {
+      if (window.__additionalDataLoaded && window.__additionalDataLoaded["/"]) {
+        const data = window.__additionalDataLoaded["/"];
+        if (
+          data &&
+          data.entry_data &&
+          data.entry_data.ProfilePage &&
+          data.entry_data.ProfilePage[0]
+        ) {
           return data.entry_data.ProfilePage[0].graphql.user.username;
         }
       }
-      
+
       // Method 3: Check for username in page content
       const usernameElement = document.querySelector('meta[property="og:url"]');
       if (usernameElement) {
-        const url = usernameElement.getAttribute('content');
+        const url = usernameElement.getAttribute("content");
         const match = url.match(/instagram\.com\/([^\/]+)/);
         if (match) return match[1];
       }
-      
+
       return null;
     });
-    
+
     if (detectedUsername) {
       myUsername = detectedUsername;
       logger.log(`Detected username: ${detectedUsername}`);
@@ -2154,10 +2366,10 @@ const Instauto = async (db, browser, options) => {
     logger.warn("Could not detect username, using username from config");
     myUsername = options.username;
   }
-  
+
   // Log the username being used
   logger.log(`Using username: ${myUsername}`);
-  
+
   if (!myUsername) {
     throw new Error("Don't know what's my username");
   }
@@ -2168,7 +2380,9 @@ const Instauto = async (db, browser, options) => {
     const userData = await navigateToUserAndGetData(myUsername);
     myUserId = userData.id;
   } catch (error) {
-    logger.warn(`Could not access profile ${myUsername}, using fallback approach`);
+    logger.warn(
+      `Could not access profile ${myUsername}, using fallback approach`
+    );
     // Use a fallback approach - we'll still be able to follow users
     myUserId = "unknown";
   }
@@ -2178,44 +2392,51 @@ const Instauto = async (db, browser, options) => {
   async function doesUserFollowMe(username) {
     try {
       logger.info("Checking if user", username, "follows us");
-      
+
       // Skip this check if we don't have a valid user ID
       if (myUserId === "unknown") {
         logger.warn("Cannot check if user follows us - no valid user ID");
         return undefined;
       }
-      
+
       // Navigate to user's profile
       await navigateToUserAndGetData(username);
-      
+
       // Check if we can see the "Message" button (indicates they follow us)
-      const messageButton = await page.$$('xpath/.//a[contains(@href, "/direct/t/")]');
+      const messageButton = await page.$$(
+        'xpath/.//a[contains(@href, "/direct/t/")]'
+      );
       if (messageButton.length > 0) {
         logger.info(`User ${username} follows us (Message button found)`);
         return true;
       }
-      
+
       // Alternative check: look for "Follow" button (means they don't follow us)
       const followButton = await findFollowButton();
       if (followButton) {
-        logger.info(`User ${username} does NOT follow us (Follow button found)`);
+        logger.info(
+          `User ${username} does NOT follow us (Follow button found)`
+        );
         return false;
       }
-      
+
       // Check for "Following" button (means we follow them)
       const followingButton = await findUnfollowButton();
       if (followingButton) {
         // If we follow them but can't message them, they probably don't follow us back
-        logger.info(`User ${username} does NOT follow us (Following button found, no Message button)`);
+        logger.info(
+          `User ${username} does NOT follow us (Following button found, no Message button)`
+        );
         return false;
       }
-      
+
       logger.warn(`Could not determine if ${username} follows us`);
       return undefined;
-      
     } catch (err) {
-      if (err.message.includes('detached') || err.message.includes('Frame')) {
-        logger.warn(`Detached frame error checking if ${username} follows us, returning undefined`);
+      if (err.message.includes("detached") || err.message.includes("Frame")) {
+        logger.warn(
+          `Detached frame error checking if ${username} follows us, returning undefined`
+        );
         return undefined;
       }
       logger.error("Failed to check if user follows us", err);
@@ -2250,23 +2471,32 @@ const Instauto = async (db, browser, options) => {
         logger.log(`Checking if ${username} follows us...`);
         const followsMe = await doesUserFollowMe(username);
         logger.info(`User ${username} follows us? ${followsMe}`);
-        
+
         if (followsMe === true) {
           logger.log(`User ${username} follows us, skipping (mutual follower)`);
           return false;
-        } else if (followsMe === false) {
+        }
+        if (followsMe === false) {
           logger.log(`User ${username} does NOT follow us, will unfollow`);
           return true;
-        } else {
-          logger.warn(`Could not determine if ${username} follows us, skipping to be safe`);
-          return false;
         }
+        logger.warn(
+          `Could not determine if ${username} follows us, skipping to be safe`
+        );
+        return false;
       } catch (error) {
-        if (error.message.includes('detached') || error.message.includes('Frame')) {
-          logger.warn(`Detached frame error checking if ${username} follows us, skipping to be safe`);
+        if (
+          error.message.includes("detached") ||
+          error.message.includes("Frame")
+        ) {
+          logger.warn(
+            `Detached frame error checking if ${username} follows us, skipping to be safe`
+          );
           return false; // Skip to be safe instead of assuming they don't follow us
         }
-        logger.error(`Error checking if ${username} follows us: ${error.message}`);
+        logger.error(
+          `Error checking if ${username} follows us: ${error.message}`
+        );
         return false; // Skip to be safe
       }
     }

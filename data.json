@@ -22,7 +22,7 @@
         "MAX_LIKES_PER_DAY": "30",
         "ENABLE_LIKES": "false",
         "ENABLE_PREFILTER": "true",
-        "FOLLOW_USER_MIN_FOLLOWERS": "50",
+        "FOLLOW_USER_MIN_FOLLOWERS": "10",
         "FOLLOW_USER_MAX_FOLLOWERS": "5000",
         "FOLLOW_USER_MIN_FOLLOWING": "0",
         "FOLLOW_USER_MAX_FOLLOWING": "7500",
