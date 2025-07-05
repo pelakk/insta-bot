@@ -31,6 +31,7 @@ const options = {
 
   username: process.env.INSTAGRAM_USERNAME,
   password: process.env.INSTAGRAM_PASSWORD,
+  sessionid: process.env.INSTAGRAM_SESSIONID,
 
   maxFollowsPerHour:
     process.env.MAX_FOLLOWS_PER_HOUR != null

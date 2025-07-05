@@ -1,7 +1,7 @@
 module.exports = {
   apps: [
     {
-      name: "ladymcbeth.rells",
+      name: "ladymcbeth_rells",
       script: "./single_instance.js",
       instances: 1,
       exec_mode: "fork",
@@ -13,6 +13,8 @@ module.exports = {
         // Instagram account 1
         INSTAGRAM_USERNAME: "ladymcbeth.rells",
         INSTAGRAM_PASSWORD: "Randki123",
+        INSTAGRAM_SESSIONID:
+          "75037996132%3Am8F50NFVpyIUct%3A1%3AAYdk982CSoZYoDzPwBhjjk8akRt3FXBe63Lb7KzuTw",
 
         // Rate limits
         MAX_FOLLOWS_PER_HOUR: "20",
@@ -24,11 +26,9 @@ module.exports = {
         FOLLOW_USER_RATIO_MAX: "4.0",
 
         // Target users to follow their followers
-        USERS_TO_FOLLOW: "emilka_kk,jakis_influencer1",
+        USERS_TO_FOLLOW: "emilka_kk,selenagomez",
       },
-      out_file: "NUL",
-      error_file: "NUL",
-      log_file: "NUL",
+      error_file: "/logs/ladymcbeth_rells.log",
       time: false,
       autorestart: true,
       max_restarts: 10,
@@ -47,6 +47,8 @@ module.exports = {
         // Instagram account 2 (RÓŻNE KONTO!)
         INSTAGRAM_USERNAME: "lariberrys",
         INSTAGRAM_PASSWORD: "Randki123",
+        INSTAGRAM_SESSIONID:
+          "74377058585%3ACmMPVEEHkoouaw%3A12%3AAYeo-wD-JwyDJaBoMR5OOp63XWH62Z3tZYiO274xhQ",
 
         // Rate limits
         MAX_FOLLOWS_PER_HOUR: "20",
@@ -58,11 +60,9 @@ module.exports = {
         FOLLOW_USER_RATIO_MAX: "4.0",
 
         // Target users to follow their followers
-        USERS_TO_FOLLOW: "natgeo,sam_kolder",
+        USERS_TO_FOLLOW: "natgeo,selenagomez",
       },
-      out_file: "NUL",
-      error_file: "NUL",
-      log_file: "NUL",
+      error_file: "/logs/lariberrys.log",
       time: false,
       autorestart: true,
       max_restarts: 10,

@@ -114,16 +114,16 @@ pm2 delete all
 
 ```bash
 # Zatrzymaj konkretną instancję
-pm2 stop instauto-1
+pm2 stop *nazwa*
 
 # Uruchom ponownie konkretną instancję
-pm2 restart instauto-1
+pm2 restart *nazwa*
 
 # Usuń konkretną instancję
-pm2 delete instauto-1
+pm2 delete *nazwa*
 
 # Szczegółowe informacje o instancji
-pm2 show instauto-1
+pm2 show *nazwa*
 ```
 
 ### Zarządzanie grupą instancji
@@ -145,13 +145,13 @@ pm2 restart instauto*
 pm2 logs
 
 # Logi z konkretnej instancji
-pm2 logs instauto-1
+pm2 logs *nazwa*
 
 # Ostatnie 50 linii z konkretnej instancji
-pm2 logs instauto-1 --lines 50
+pm2 logs *nazwa* --lines 50
 
 # Logi z określonego czasu
-pm2 logs instauto-1 --timestamp
+pm2 logs *nazwa* --timestamp
 
 # Wyczyść wszystkie logi
 pm2 flush
@@ -164,16 +164,16 @@ pm2 flush
 pm2 monit
 
 # Szczegółowe informacje o procesie
-pm2 show instauto-1
+pm2 show *nazwa*
 ```
 
 ### Pliki logów
 
 Logi są automatycznie zapisywane w folderze `./logs/`:
 
-- `instauto-1-out.log` - standardowe wyjście
-- `instauto-1-error.log` - błędy
-- `instauto-1.log` - wszystkie logi
+- `*nazwa*-out.log` - standardowe wyjście
+- `*nazwa*-error.log` - błędy
+- `*nazwa*.log` - wszystkie logi
 
 ## 🔧 Rozwiązywanie problemów
 
@@ -181,13 +181,13 @@ Logi są automatycznie zapisywane w folderze `./logs/`:
 
 ```bash
 # Sprawdź szczegóły błędu
-pm2 show instauto-1
+pm2 show *nazwa*
 
 # Sprawdź logi błędów
-pm2 logs instauto-1 --err
+pm2 logs *nazwa* --err
 
 # Usuń i uruchom ponownie
-pm2 delete instauto-1
+pm2 delete *nazwa*
 pm2 start ecosystem.config.js
 ```
 
@@ -198,7 +198,7 @@ pm2 start ecosystem.config.js
 curl --proxy socks5://kamzza:bJXwSnBLy9@77.47.240.226:50101 https://httpbin.org/ip
 
 # Sprawdź logi proxy w aplikacji
-pm2 logs instauto-1 | grep proxy
+pm2 logs *nazwa* | grep proxy
 ```
 
 ### Problemy z logowaniem Instagram
@@ -208,7 +208,7 @@ pm2 logs instauto-1 | grep proxy
 cat .env
 
 # Sprawdź logi błędów logowania
-pm2 logs instauto-1 --err | grep -i "login\|password\|auth"
+pm2 logs *nazwa* --err | grep -i "login\|password\|auth"
 ```
 
 ### Konflikty portów

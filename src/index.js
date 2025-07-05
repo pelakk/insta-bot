@@ -37,6 +37,7 @@ const Instauto = async (db, browser, options) => {
 
     username: myUsernameIn,
     password,
+    sessionid,
     enableCookies = true,
 
     randomizeUserAgent = true,
@@ -113,12 +114,57 @@ const Instauto = async (db, browser, options) => {
 
   async function tryLoadCookies() {
     try {
+      // Prioritet 1: Załaduj sessionid z env jeśli dostępny
+      if (sessionid) {
+        logger.log("Loading sessionid from environment variable");
+
+        // Ustaw podstawowe cookies potrzebne do działania
+        const basicCookies = [
+          {
+            name: "sessionid",
+            value: sessionid,
+            domain: ".instagram.com",
+            path: "/",
+            secure: true,
+            httpOnly: true,
+            sameSite: "None",
+          },
+          {
+            name: "csrftoken",
+            value: `generated_${Math.random().toString(36).substr(2, 9)}`,
+            domain: ".instagram.com",
+            path: "/",
+            secure: true,
+            httpOnly: false,
+          },
+          {
+            name: "mid",
+            value: `generated_${Math.random().toString(36).substr(2, 9)}`,
+            domain: ".instagram.com",
+            path: "/",
+            secure: true,
+            httpOnly: false,
+          },
+        ];
+
+        for (const cookie of basicCookies) {
+          await page.setCookie(cookie);
+        }
+
+        logger.log("Sessionid cookies set successfully");
+        return true;
+      }
+
+      // Prioritet 2: Załaduj z pliku cookies
       const cookies = JSON.parse(await fs.readFile(cookiesPath));
       for (const cookie of cookies) {
         if (cookie.name !== "ig_lang") await page.setCookie(cookie);
       }
+      logger.log("Cookies loaded from file");
+      return true;
     } catch (err) {
-      logger.error("No cookies found");
+      logger.error("No cookies found or failed to load:", err.message);
+      return false;
     }
   }
 
@@ -1270,6 +1316,7 @@ const Instauto = async (db, browser, options) => {
     return false;
   }
 
+  // Obsługa cookie consent dialogs
   await tryPressButton(
     await page.$$('xpath/.//button[contains(text(), "Accept")]'),
     "Accept cookies dialog"
@@ -1289,65 +1336,82 @@ const Instauto = async (db, browser, options) => {
     10000
   );
 
+  // Sprawdź czy jesteśmy już zalogowani po załadowaniu cookies
+  logger.log("Checking if already logged in...");
+
   if (!(await isLoggedIn())) {
-    if (!myUsername || !password) {
+    logger.log("Not logged in, attempting authentication...");
+
+    // Sprawdź czy mamy credentials do logowania
+    if ((!myUsername || !password) && !sessionid) {
       await tryDeleteCookies();
       throw new Error(
-        "No longer logged in. Deleting cookies and aborting. Need to provide username/password"
+        "No longer logged in and no credentials provided. Need username/password or sessionid"
       );
     }
 
-    try {
-      await page.click('a[href="/accounts/login/?source=auth_switcher"]');
-      await sleep(1000);
-    } catch (err) {
-      logger.info("No login page button, assuming we are on login form");
+    // Tylko próbuj logowanie username/password jeśli nie masz sessionid
+    if (!sessionid && myUsername && password) {
+      logger.log("Attempting username/password login...");
+
+      try {
+        await page.click('a[href="/accounts/login/?source=auth_switcher"]');
+        await sleep(1000);
+      } catch (err) {
+        logger.info("No login page button, assuming we are on login form");
+        await tryPressButton(
+          await page.$$('button[class="_a9-- _ap36 _a9_0"]'),
+          "Cookie consent button try 1"
+        );
+        await tryPressButton(
+          await page.$$('button[class="_a9-- _ap36 _a9_1"]'),
+          "Cookie consent button try 2"
+        );
+        await sleep(1000);
+      }
+
+      // Mobile version https://github.com/mifi/SimpleInstaBot/issues/7
       await tryPressButton(
-        await page.$$('button[class="_a9-- _ap36 _a9_0"]'),
-        "Cookie consent button try 1"
+        await page.$$('xpath/.//button[contains(text(), "Log In")]'),
+        "Login form button"
       );
-      await tryPressButton(
-        await page.$$('button[class="_a9-- _ap36 _a9_1"]'),
-        "Cookie consent button try 2"
-      );
+
+      await page.type('input[name="username"]', myUsername, { delay: 50 });
       await sleep(1000);
-    }
+      await page.type('input[name="password"]', password, { delay: 50 });
+      await sleep(1000);
 
-    // Mobile version https://github.com/mifi/SimpleInstaBot/issues/7
-    await tryPressButton(
-      await page.$$('xpath/.//button[contains(text(), "Log In")]'),
-      "Login form button"
-    );
+      for (;;) {
+        const didClickLogin = await tryClickLogin();
+        if (didClickLogin) break;
+        logger.warn(
+          "Login button not found. Maybe you can help me click it? And also report an issue on github with a screenshot of what you're seeing :)"
+        );
+        await sleep(6000);
+      }
 
-    await page.type('input[name="username"]', myUsername, { delay: 50 });
-    await sleep(1000);
-    await page.type('input[name="password"]', password, { delay: 50 });
-    await sleep(1000);
+      await sleepFixed(10000);
 
-    for (;;) {
-      const didClickLogin = await tryClickLogin();
-      if (didClickLogin) break;
-      logger.warn(
-        "Login button not found. Maybe you can help me click it? And also report an issue on github with a screenshot of what you're seeing :)"
-      );
-      await sleep(6000);
-    }
-
-    await sleepFixed(10000);
-
-    // Sometimes login button gets stuck with a spinner
-    // https://github.com/mifi/SimpleInstaBot/issues/25
-    if (!(await isLoggedIn())) {
-      logger.log("Still not logged in, trying to reload loading page");
+      // Sometimes login button gets stuck with a spinner
+      // https://github.com/mifi/SimpleInstaBot/issues/25
+      if (!(await isLoggedIn())) {
+        logger.log("Still not logged in, trying to reload loading page");
+        await page.reload();
+        await sleep(5000);
+      }
+    } else if (sessionid) {
+      // Jeśli mamy sessionid ale nie jesteśmy zalogowani, odśwież stronę
+      logger.log("Have sessionid but not logged in, refreshing page...");
       await page.reload();
       await sleep(5000);
     }
 
+    // Ostateczne sprawdzenie logowania
     let warnedAboutLoginFail = false;
     while (!(await isLoggedIn())) {
       if (!warnedAboutLoginFail) {
         logger.warn(
-          'WARNING: Login has not succeeded. This could be because of an incorrect username/password, or a "suspicious login attempt"-message. You need to manually complete the process, or if really logged in, click the Instagram logo in the top left to go to the Home page.'
+          'WARNING: Login has not succeeded. This could be because of an incorrect username/password, invalid sessionid, or a "suspicious login attempt"-message. You need to manually complete the process, or if really logged in, click the Instagram logo in the top left to go to the Home page.'
         );
       }
       warnedAboutLoginFail = true;
@@ -1368,6 +1432,8 @@ const Instauto = async (db, browser, options) => {
       await page.$$('xpath/.//button[contains(text(), "Save info")]'),
       "Login info dialog: Save info"
     );
+  } else {
+    logger.log("Already logged in! Skipping authentication.");
   }
 
   await tryPressButton(
