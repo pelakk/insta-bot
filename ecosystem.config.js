@@ -65,7 +65,7 @@ module.exports = {
         // Enable/disable likes
         ENABLE_LIKES: "false",
 
-        // Follow filters - konkretne liczby followersów i following
+        // Follow filters - konkretne liczby followersów i following dsadsad
         FOLLOW_USER_MIN_FOLLOWERS: "50",     // Minimum 50 obserwujących
         FOLLOW_USER_MAX_FOLLOWERS: "5000",   // Maksimum 5000 obserwujących
         FOLLOW_USER_MIN_FOLLOWING: "50",     // Minimum 50 obserwowanych
