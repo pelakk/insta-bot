@@ -29,8 +29,6 @@ const logger = createLogger(instanceId);
 const options = {
   cookiesPath: `./cookies_${instanceId}.json`,
 
-  username: process.env.INSTAGRAM_USERNAME,
-  password: process.env.INSTAGRAM_PASSWORD,
   sessionid: process.env.INSTAGRAM_SESSIONID,
 
   maxFollowsPerHour:
@@ -59,6 +57,24 @@ const options = {
   followUserMaxFollowing: null,
   followUserMinFollowers: null,
   followUserMinFollowing: null,
+
+  minimumLikeCount:
+    process.env.MINIMUM_LIKE_COUNT != null
+      ? parseInt(process.env.MINIMUM_LIKE_COUNT, 10)
+      : null,
+  maximumLikeCount:
+    process.env.MAXIMUM_LIKE_COUNT != null
+      ? parseInt(process.env.MAXIMUM_LIKE_COUNT, 10)
+      : null,
+
+  // Whether to like posts after following users (controlled by SHOULD_LIKE_POSTS env var)
+  shouldLikePosts: process.env.SHOULD_LIKE_POSTS === "true",
+
+  // Number of posts to like per user
+  postsToLike:
+    process.env.POSTS_TO_LIKE != null
+      ? parseInt(process.env.POSTS_TO_LIKE, 10)
+      : 3,
 
   shouldFollowUser: null,
   shouldLikeMedia: null,
@@ -119,12 +135,14 @@ const options = {
         : [];
 
     // Follow followers
+    const shouldLikePosts = process.env.SHOULD_LIKE_POSTS === "true";
+    const postsToLike = process.env.POSTS_TO_LIKE || "3";
     await instauto.followUsersFollowers({
       usersToFollowFollowersOf,
       maxFollowsTotal: options.maxFollowsPerDay - unfollowedCount,
       skipPrivate: true,
-      enableLikeImages: true,
-      likeImagesMax: 3,
+      enableLikeImages: shouldLikePosts,
+      likeImagesMax: Number(postsToLike),
     });
 
     await instauto.sleep(10 * 60 * 1000);

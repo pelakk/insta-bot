@@ -28,8 +28,7 @@ const defaultLogger = createLogger("?");
 const options = {
   cookiesPath: "./cookies.json",
 
-  username: process.env.INSTAGRAM_USERNAME,
-  password: process.env.INSTAGRAM_PASSWORD,
+  sessionid: process.env.INSTAGRAM_SESSIONID,
 
   // Global limit that prevents follow or unfollows (total) to exceed this number over a sliding window of one hour:
   maxFollowsPerHour:
@@ -66,6 +65,26 @@ const options = {
   followUserMinFollowers: null,
   // Don't follow users who have more people following them than this:
   followUserMinFollowing: null,
+
+  // Don't follow users who have less than this number of posts:
+  minimumLikeCount:
+    process.env.MINIMUM_LIKE_COUNT != null
+      ? parseInt(process.env.MINIMUM_LIKE_COUNT, 10)
+      : null,
+  // Don't follow users who have more than this number of posts:
+  maximumLikeCount:
+    process.env.MAXIMUM_LIKE_COUNT != null
+      ? parseInt(process.env.MAXIMUM_LIKE_COUNT, 10)
+      : null,
+
+  // Whether to like posts after following users (controlled by SHOULD_LIKE_POSTS env var)
+  shouldLikePosts: process.env.SHOULD_LIKE_POSTS === "true",
+
+  // Number of posts to like per user
+  postsToLike:
+    process.env.POSTS_TO_LIKE != null
+      ? parseInt(process.env.POSTS_TO_LIKE, 10)
+      : 3,
 
   // Custom logic filter for user follow
   shouldFollowUser: null,
@@ -153,12 +172,14 @@ async function runInstance(instanceId, proxyIp) {
         : [];
 
     // Follow followers
+    const shouldLikePosts = process.env.SHOULD_LIKE_POSTS === "true";
+    const postsToLike = process.env.POSTS_TO_LIKE;
     await instauto.followUsersFollowers({
       usersToFollowFollowersOf,
       maxFollowsTotal: options.maxFollowsPerDay - unfollowedCount,
       skipPrivate: true,
-      enableLikeImages: true,
-      likeImagesMax: 3,
+      enableLikeImages: shouldLikePosts,
+      likeImagesMax: Number(postsToLike),
     });
 
     await instauto.sleep(10 * 60 * 1000);
