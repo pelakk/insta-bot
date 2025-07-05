@@ -32,7 +32,7 @@ module.exports = {
         FOLLOW_USER_MAX_FOLLOWING: "2000",   // Maksimum 2000 obserwowanych
 
         // Target users to follow their followers
-        USERS_TO_FOLLOW: "emilka_kk,selenagomez",
+        USERS_TO_FOLLOW: "msliababy,grungeeaesth,grungeaesthetico,cyber.rue,non_nonsummerjack,luna.amemiya",
       },
       error_file: "/logs/ladymcbeth_rells.log",
       time: false,
