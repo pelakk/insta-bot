@@ -21,9 +21,14 @@ module.exports = {
         MAX_FOLLOWS_PER_DAY: "150",
         MAX_LIKES_PER_DAY: "30",
 
-        // Follow filters
-        FOLLOW_USER_RATIO_MIN: "0.2",
-        FOLLOW_USER_RATIO_MAX: "4.0",
+        // Enable/disable likes
+        ENABLE_LIKES: "true",
+
+        // Follow filters - konkretne liczby followersów i following
+        FOLLOW_USER_MIN_FOLLOWERS: "50",     // Minimum 50 obserwujących
+        FOLLOW_USER_MAX_FOLLOWERS: "5000",   // Maksimum 5000 obserwujących
+        FOLLOW_USER_MIN_FOLLOWING: "50",     // Minimum 50 obserwowanych
+        FOLLOW_USER_MAX_FOLLOWING: "2000",   // Maksimum 2000 obserwowanych
 
         // Target users to follow their followers
         USERS_TO_FOLLOW: "emilka_kk,selenagomez",
@@ -55,9 +60,14 @@ module.exports = {
         MAX_FOLLOWS_PER_DAY: "150",
         MAX_LIKES_PER_DAY: "30",
 
-        // Follow filters
-        FOLLOW_USER_RATIO_MIN: "0.2",
-        FOLLOW_USER_RATIO_MAX: "4.0",
+        // Enable/disable likes
+        ENABLE_LIKES: "true",
+
+        // Follow filters - konkretne liczby followersów i following
+        FOLLOW_USER_MIN_FOLLOWERS: "50",     // Minimum 50 obserwujących
+        FOLLOW_USER_MAX_FOLLOWERS: "5000",   // Maksimum 5000 obserwujących
+        FOLLOW_USER_MIN_FOLLOWING: "50",     // Minimum 50 obserwowanych
+        FOLLOW_USER_MAX_FOLLOWING: "2000",   // Maksimum 2000 obserwowanych
 
         // Target users to follow their followers
         USERS_TO_FOLLOW: "natgeo,selenagomez",
