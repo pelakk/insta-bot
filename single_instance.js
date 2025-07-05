@@ -6,7 +6,7 @@
 const puppeteer = require("puppeteer");
 const proxyChain = require("proxy-chain");
 
-const Instauto = require(".");
+const Instauto = require("./src");
 
 // Pobierz ID instancji i IP proxy ze zmiennych środowiskowych
 const instanceId = process.env.INSTANCE_ID || "1";
