@@ -23,7 +23,7 @@ module.exports = {
         MAX_LIKES_PER_DAY: "30",
 
         // Enable/disable likes
-        ENABLE_LIKES: "true",
+        ENABLE_LIKES: "false",
 
         // Follow filters - konkretne liczby followersów i following
         FOLLOW_USER_MIN_FOLLOWERS: "50",     // Minimum 50 obserwujących
@@ -63,7 +63,7 @@ module.exports = {
         MAX_LIKES_PER_DAY: "30",
 
         // Enable/disable likes
-        ENABLE_LIKES: "true",
+        ENABLE_LIKES: "false",
 
         // Follow filters - konkretne liczby followersów i following
         FOLLOW_USER_MIN_FOLLOWERS: "50",     // Minimum 50 obserwujących

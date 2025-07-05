@@ -1499,6 +1499,9 @@ const Instauto = async (db, browser, options) => {
     myUsername = options.username;
   }
   
+  // Log the username being used
+  logger.log(`Using username: ${myUsername}`);
+  
   if (!myUsername) {
     throw new Error("Don't know what's my username");
   }
