@@ -1,0 +1,9 @@
+2025-07-05T13:04:01: 🔧 Telegram Admin module initialized
+2025-07-05T13:04:01: 👤 Telegram Accounts module initialized
+2025-07-05T13:04:01: 📋 Commands registered
+2025-07-05T13:04:01: 🤖 Telegram Bot initialized
+2025-07-05T13:05:21: error: [polling_error] {"code":"ETELEGRAM","message":"ETELEGRAM: 409 Conflict: terminated by other getUpdates request; make sure that only one bot instance is running"}
+2025-07-05T13:05:37: error: [polling_error] {"code":"ETELEGRAM","message":"ETELEGRAM: 409 Conflict: terminated by other getUpdates request; make sure that only one bot instance is running"}
+2025-07-05T13:05:44: error: [polling_error] {"code":"ETELEGRAM","message":"ETELEGRAM: 409 Conflict: terminated by other getUpdates request; make sure that only one bot instance is running"}
+2025-07-05T13:05:51: error: [polling_error] {"code":"ETELEGRAM","message":"ETELEGRAM: 409 Conflict: terminated by other getUpdates request; make sure that only one bot instance is running"}
+2025-07-05T13:05:58: error: [polling_error] {"code":"ETELEGRAM","message":"ETELEGRAM: 409 Conflict: terminated by other getUpdates request; make sure that only one bot instance is running"}

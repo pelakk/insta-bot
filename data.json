@@ -1,0 +1,33 @@
+{
+  "users": [],
+  "proxies": [],
+  "cookies": [],
+  "accounts": [
+    {
+      "user_id": 7647790288,
+      "username": "lariberrys",
+      "password": "your_instagram_password_here",
+      "cookie": "sessionid=74377058585%3A7gBhijBAe7qLvd%3A6%3AAYeiTK6JVYXn3Ej6A6yh3iyszU0EmV1aDXW-L1RUng",
+      "proxy": "socks5://kamzza:bJXwSnBLy9@77.47.240.226:50101",
+      "targets": [
+        "asianhouse",
+        "lunamei.xo",
+        "summerrstone",
+        "imnaominorth",
+        "jasaminebankstv"
+      ],
+      "config": {
+        "MAX_FOLLOWS_PER_HOUR": "20",
+        "MAX_FOLLOWS_PER_DAY": "150",
+        "MAX_LIKES_PER_DAY": "30",
+        "ENABLE_LIKES": "false",
+        "ENABLE_PREFILTER": "true",
+        "FOLLOW_USER_MIN_FOLLOWERS": "50",
+        "FOLLOW_USER_MAX_FOLLOWERS": "5000",
+        "FOLLOW_USER_MIN_FOLLOWING": "0",
+        "FOLLOW_USER_MAX_FOLLOWING": "7500",
+        "MAX_FOLLOWERS_TO_COLLECT_PER_TARGET": "100"
+      }
+    }
+  ]
+}
