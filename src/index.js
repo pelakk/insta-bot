@@ -1355,6 +1355,45 @@ const Instauto = async (db, browser, options) => {
     }
   }
 
+  async function handleSaveLoginInfoPopup() {
+    try {
+      logger.log("Checking for 'Save your login info?' popup...");
+      
+      // Multiple selectors to handle different variations of the popup
+      const selectors = [
+        // Primary selector using aria-label
+        'xpath/.//div[@aria-label="Dialog for saving Instagram login information"]//button[contains(text(), "Not now")]',
+        'xpath/.//div[@aria-label="Dialog for saving Instagram login information"]//span[contains(text(), "Not now")]',
+        
+        // Alternative selectors in case aria-label changes
+        'xpath/.//div[contains(@class, "x1n2onr6") and contains(@class, "x1ja2u2z")]//button[contains(text(), "Not now")]',
+        'xpath/.//div[contains(@class, "x1n2onr6") and contains(@class, "x1ja2u2z")]//span[contains(text(), "Not now")]',
+        
+        // Generic dialog selector with "Not now" text
+        'xpath/.//div[@role="dialog"]//button[contains(text(), "Not now")]',
+        'xpath/.//div[@role="dialog"]//span[contains(text(), "Not now")]',
+        
+        // Fallback: any element with "Not now" text that might be clickable
+        'xpath/.//*[contains(text(), "Not now") and (self::button or self::span or self::div)]'
+      ];
+      
+      for (const selector of selectors) {
+        const elements = await page.$$(selector);
+        if (elements.length > 0) {
+          logger.log(`Found 'Save login info' popup with selector: ${selector}`);
+          await tryPressButton(elements, "Save login info dialog: Not now", 2000);
+          return true;
+        }
+      }
+      
+      logger.log("No 'Save your login info?' popup found");
+      return false;
+    } catch (err) {
+      logger.warn("Error handling save login info popup:", err.message);
+      return false;
+    }
+  }
+
   // Obsługa cookie consent dialogs
   await tryPressButton(
     await page.$$('xpath/.//button[contains(text(), "Accept")]'),
@@ -1421,14 +1460,23 @@ const Instauto = async (db, browser, options) => {
       await page.$$('xpath/.//button[contains(text(), "Save info")]'),
       "Login info dialog: Save info"
     );
+    
+    // Handle "Save your login info?" popup dialog
+    await handleSaveLoginInfoPopup();
   } else {
     logger.log("Already logged in! Skipping authentication.");
+    
+    // Handle "Save your login info?" popup dialog even when already logged in
+    await handleSaveLoginInfoPopup();
   }
 
   await tryPressButton(
     await page.$$('xpath/.//button[contains(text(), "Not Now")]'),
     "Turn on Notifications dialog"
   );
+  
+  // Handle "Save your login info?" popup dialog (additional check)
+  await handleSaveLoginInfoPopup();
 
   await trySaveCookies();
 

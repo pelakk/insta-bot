@@ -20,27 +20,30 @@ const accountTemplate = (accountData, index) => ({
     INSTAGRAM_SESSIONID: accountData.sessionid,
     INSTAGRAM_USERNAME: accountData.username,
 
-    // ENGAGEMENT-OPTIMIZED RATE LIMITS
-    MAX_FOLLOWS_PER_HOUR: "25",
-    MAX_FOLLOWS_PER_DAY: "150",
+    // OPTIMIZED ENGAGEMENT RATE LIMITS
+    MAX_FOLLOWS_PER_HOUR: "35",
+    MAX_FOLLOWS_PER_DAY: "300",
     MAX_LIKES_PER_DAY: "40",
 
-    // ENGAGEMENT-OPTIMIZED FILTERS
-    FOLLOW_USER_RATIO_MIN: "0.3",
-    FOLLOW_USER_RATIO_MAX: "2.5",
-    MINIMUM_POST_COUNT: "2",
-    MAXIMUM_POST_COUNT: "300",
+    // OPTIMAL ENGAGEMENT FILTERS
+    FOLLOW_USER_RATIO_MIN: "0.2",
+    FOLLOW_USER_RATIO_MAX: "5.0",
+    MINIMUM_POST_COUNT: "3",
+    MAXIMUM_POST_COUNT: "500",
     SHOULD_LIKE_POSTS: "true",
     POSTS_TO_LIKE: "2",
     
-    // ENGAGEMENT-FOCUSED FOLLOWER TARGETING
+    // SAFE FOLLOWER TARGETING (200-10000 followers)
     FOLLOW_USER_MIN_FOLLOWERS: "200",
-    FOLLOW_USER_MAX_FOLLOWERS: "7000",
+    FOLLOW_USER_MAX_FOLLOWERS: "10000",
     FOLLOW_USER_MIN_FOLLOWING: "100",
-    FOLLOW_USER_MAX_FOLLOWING: "1500",
+    FOLLOW_USER_MAX_FOLLOWING: "2000",
 
     // ENGAGEMENT-OPTIMIZED TARGET USERS
     USERS_TO_FOLLOW: "lelasohnabaka,vixeniaaa,gonkgonk666,zxeriascute,msliababy,grungeeaesth",
+    
+    // BROWSER SETTINGS
+    HEADLESS: "false",  // false = widoczne okna, true = niewidoczne
   },
   error_file: `./logs/${accountData.username}.log`,
   time: false,

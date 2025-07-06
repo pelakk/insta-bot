@@ -7,6 +7,7 @@
 - [🚀 Szybki start](#-szybki-start)
 - [⚙️ Konfiguracja](#️-konfiguracja)
 - [🛡️ Stealth Mode](#️-stealth-mode)
+- [🪟 Automatyczne Obsługa Popupów](#-automatyczne-obsługa-popupów)
 - [👥 Zarządzanie kontami](#-zarządzanie-kontami)
 - [🔧 Ustawienia](#-ustawienia)
 - [📊 Monitorowanie](#-monitorowanie)
@@ -142,6 +143,63 @@ node test-stealth.js
 
 ---
 
+## 🪟 Automatyczne Obsługa Popupów
+
+### Funkcje Obsługi Dialogów
+
+Bot automatycznie obsługuje wszystkie typowe popupy Instagram, które mogą pojawić się podczas logowania:
+
+#### 🔐 Dialog "Save your login info?"
+- **Automatyczne wykrywanie** popupu po zalogowaniu
+- **Kliknięcie "Not now"** - nie zapisuje danych logowania
+- **Wielokrotne sprawdzenie** - obsługa w różnych scenariuszach logowania
+- **Robustne selektory** - używa aria-label i fallback selektorów
+
+#### 🍪 Cookie Consent Dialogs
+- **Accept cookies** - automatyczne akceptowanie
+- **Only allow essential cookies** - obsługa różnych wariantów
+- **Allow essential and optional cookies** - pełna obsługa
+
+#### 🔔 Notification Dialogs
+- **"Turn on Notifications"** - automatyczne kliknięcie "Not Now"
+- **Różne warianty** - obsługa różnych języków i wersji
+
+### Techniczne Szczegóły
+
+#### Selektory XPath
+```javascript
+// Primary selector using aria-label
+'xpath/.//div[@aria-label="Dialog for saving Instagram login information"]//button[contains(text(), "Not now")]'
+
+// Alternative selectors using class names
+'xpath/.//div[contains(@class, "x1n2onr6") and contains(@class, "x1ja2u2z")]//button[contains(text(), "Not now")]'
+
+// Generic dialog selector
+'xpath/.//div[@role="dialog"]//button[contains(text(), "Not now")]'
+```
+
+#### Lokalizacje Obsługi
+- **Po udanym logowaniu** - gdy użytkownik nie był zalogowany
+- **Gdy już zalogowany** - dodatkowe sprawdzenie
+- **Po obsłudze innych dialogów** - jako zabezpieczenie
+
+#### Logowanie
+```
+[INFO] Checking for 'Save your login info?' popup...
+[INFO] Found 'Save login info' popup with selector: xpath/.//div[@aria-label="Dialog for saving Instagram login information"]//button[contains(text(), "Not now")]
+[INFO] Pressing button: Save login info dialog: Not now
+```
+
+### Korzyści
+
+✅ **Bezpieczeństwo** - nie zapisuje danych logowania w przeglądarce  
+✅ **Automatyzacja** - brak potrzeby ręcznej interwencji  
+✅ **Niezawodność** - wielokrotne sprawdzenie i fallback selektory  
+✅ **Stealth** - naturalne zachowanie jak człowiek  
+✅ **Wielojęzyczność** - obsługa różnych wersji językowych  
+
+---
+
 ## 👥 Zarządzanie kontami
 
 ### Aktualne konta
@@ -206,15 +264,15 @@ pm2 delete nazwa_konta
 "FOLLOW_USER_MAX_FOLLOWING": "999999"
 ```
 
-#### 🛡️ Bezpieczne ustawienia (zalecane)
+#### 🛡️ Bezpieczne ustawienia (zalecane) - OPTIMIZED ENGAGEMENT
 ```javascript
-"MAX_FOLLOWS_PER_HOUR": "25",
-"MAX_FOLLOWS_PER_DAY": "150",
-"MAX_LIKES_PER_DAY": "50",
-"FOLLOW_USER_MIN_FOLLOWERS": "100",
-"FOLLOW_USER_MAX_FOLLOWERS": "8000",
-"FOLLOW_USER_MIN_FOLLOWING": "50",
-"FOLLOW_USER_MAX_FOLLOWING": "1500",
+"MAX_FOLLOWS_PER_HOUR": "35",
+"MAX_FOLLOWS_PER_DAY": "300",
+"MAX_LIKES_PER_DAY": "40",
+"FOLLOW_USER_MIN_FOLLOWERS": "200",
+"FOLLOW_USER_MAX_FOLLOWERS": "10000",
+"FOLLOW_USER_MIN_FOLLOWING": "100",
+"FOLLOW_USER_MAX_FOLLOWING": "2000",
 "FOLLOW_USER_RATIO_MIN": "0.2",
 "FOLLOW_USER_RATIO_MAX": "5.0",
 "MINIMUM_POST_COUNT": "3",
@@ -229,6 +287,25 @@ pm2 delete nazwa_konta
 "FOLLOW_USER_RATIO_MIN": "0.0",
 "FOLLOW_USER_RATIO_MAX": "999999.0"
 ```
+
+### 🎯 Strategia Anti-Shadowban
+
+#### 📊 Optymalne Limity
+- **35 followów na godzinę** - zoptymalizowany limit dla lepszego wzrostu
+- **300 followów dziennie** - zwiększona aktywność, szybszy wzrost
+- **40 like'ów dziennie** - bezpieczny engagement, unika shadowbana
+
+#### 🎯 Targeting Kont
+- **200-10,000 followers** - konta o średniej popularności, lepsze engagement
+- **100-2,000 following** - aktywne konta, nie spamowe
+- **Ratio 0.2-5.0** - szeroki zakres, od aktywnych po popularne
+- **Minimum 3 posty** - aktywne konta z treścią
+
+#### 🛡️ Dlaczego Te Ustawienia?
+- **Naturalne tempo** - naśladuje ludzkie zachowanie
+- **Jakość over ilość** - lepsze engagement z mniejszą liczbą followów
+- **Bezpieczne limity** - poniżej progu wykrywania Instagram
+- **Zrównoważone targeting** - unika kont spamowych i botowych
 
 
 
@@ -317,6 +394,18 @@ TimeoutError: Timed out after waiting 30000ms
 - Czy nie ma błędów w logach
 - Czy `MINIMUM_POST_COUNT` nie jest > 0
 
+#### 6. Problemy z popupami
+**Objawy:**
+- Bot utyka na stronie logowania
+- Pojawiają się błędy związane z dialogami
+- Logi pokazują problemy z selektorami
+
+**Rozwiązanie:**
+- Sprawdź czy popup "Save your login info?" jest obsługiwany
+- Sprawdź logi pod kątem komunikatów o popupach
+- Bot automatycznie obsługuje większość dialogów
+- W razie problemów sprawdź czy Instagram nie zmienił struktury HTML
+
 ### Przydatne komendy diagnostyczne
 
 ```bash
@@ -361,12 +450,21 @@ node test-stealth.js
 
 ## 🎯 Aktualne ustawienia
 
-### Konto ladymcbeth.rells (testowe)
-- **Status**: Aktywne
-- **Filtry**: Followuje każdego użytkownika
-- **MINIMUM_POST_COUNT**: 0
-- **FOLLOW_USER_MIN_FOLLOWERS**: 0
-- **FOLLOW_USER_RATIO_MIN**: 0.0
-- **Trust Factor**: Bardzo wysoki (stealth mode)
+### 🛡️ Zoptymalizowana Konfiguracja Engagement
+- **MAX_FOLLOWS_PER_HOUR**: 35 (zoptymalizowany limit)
+- **MAX_FOLLOWS_PER_DAY**: 300 (szybszy wzrost)
+- **MAX_LIKES_PER_DAY**: 40 (bezpieczny engagement)
+- **FOLLOW_USER_MIN_FOLLOWERS**: 200 (aktywne konta)
+- **FOLLOW_USER_MAX_FOLLOWERS**: 10,000 (średnia popularność)
+- **FOLLOW_USER_RATIO_MIN**: 0.2 (aktywne konta)
+- **FOLLOW_USER_RATIO_MAX**: 5.0 (szeroki zakres)
+- **MINIMUM_POST_COUNT**: 3 (aktywne z treścią)
+- **Trust Factor**: Bardzo wysoki (stealth mode + bezpieczne limity)
 
-**💡 Wskazówka:** Zacznij od konserwatywnych ustawień i stopniowo zwiększaj agresywność, monitorując reakcję Instagram. Używaj stealth mode dla maksymalnej niewykrywalności.
+### 📈 Strategia Wzrostu
+1. **Start**: Użyj zoptymalizowanych ustawień przez 2-3 tygodnie
+2. **Monitor**: Sprawdź engagement i reakcje Instagram
+3. **Dostosuj**: Jeśli wszystko OK, możesz zwiększyć do 40-45 followów/godzinę
+4. **Bezpieczeństwo**: Zawsze trzymaj się poniżej 50 followów/godzinę
+
+**💡 Wskazówka:** Ta konfiguracja maksymalizuje bezpieczeństwo i minimalizuje ryzyko shadowbana. Lepiej mieć mniej followów ale bezpiecznie, niż więcej ale z ryzykiem bana.
