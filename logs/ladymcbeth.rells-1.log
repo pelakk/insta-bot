@@ -1,0 +1,20 @@
+2025-07-06T19:43:24.976Z [Instance 2] Failed to set language, trying fallback (cookie) Error: Language selector not found
+    at setLang (C:\Users\VXZ\Downloads\insta-bot-pelak-proxy\insta-bot-pelak-proxy\src\index.js:1289:15)
+    at async Instauto (C:\Users\VXZ\Downloads\insta-bot-pelak-proxy\insta-bot-pelak-proxy\src\index.js:1344:3)
+    at async C:\Users\VXZ\Downloads\insta-bot-pelak-proxy\insta-bot-pelak-proxy\single_instance.js:209:22
+2025-07-06T19:46:54.698Z [Instance 2] Proxy error during language setup, skipping language change
+2025-07-06T19:46:54.698Z [Instance 2] Error: Error: Attempted to use detached Frame '2D642E360851B1F3EE69D6711837C173'.
+    at CdpFrame.<anonymous> (C:\Users\VXZ\Downloads\insta-bot-pelak-proxy\insta-bot-pelak-proxy\node_modules\puppeteer-core\lib\cjs\puppeteer\util\decorators.js:107:23)
+    at CdpPage.$$ (C:\Users\VXZ\Downloads\insta-bot-pelak-proxy\insta-bot-pelak-proxy\node_modules\puppeteer-core\lib\cjs\puppeteer\api\Page.js:315:43)
+    at Instauto (C:\Users\VXZ\Downloads\insta-bot-pelak-proxy\insta-bot-pelak-proxy\src\index.js:1399:16)
+    at async C:\Users\VXZ\Downloads\insta-bot-pelak-proxy\insta-bot-pelak-proxy\single_instance.js:209:22
+ERROR: The process with PID 34908 (child process of PID 17816) could not be terminated.
+Reason: Brak dzia�aj�cego wyst�pienia zadania.
+ERROR: The process with PID 17816 (child process of PID 21384) could not be terminated.
+Reason: Operacja, kt�rej pr�bowano, nie jest obs�ugiwana.
+ERROR: The process with PID 21384 (child process of PID 28056) could not be terminated.
+Reason: Brak dzia�aj�cego wyst�pienia zadania.
+2025-07-06T19:48:28.972Z [Instance 2] Failed to set language, trying fallback (cookie) Error: Language selector not found
+    at setLang (C:\Users\VXZ\Downloads\insta-bot-pelak-proxy\insta-bot-pelak-proxy\src\index.js:1289:15)
+    at async Instauto (C:\Users\VXZ\Downloads\insta-bot-pelak-proxy\insta-bot-pelak-proxy\src\index.js:1344:3)
+    at async C:\Users\VXZ\Downloads\insta-bot-pelak-proxy\insta-bot-pelak-proxy\single_instance.js:209:22

@@ -43,7 +43,7 @@ const accountTemplate = (accountData, index) => ({
     USERS_TO_FOLLOW: "lelasohnabaka,vixeniaaa,gonkgonk666,zxeriascute,msliababy,grungeeaesth",
     
     // BROWSER SETTINGS
-    HEADLESS: "false",  // false = widoczne okna, true = niewidoczne
+    HEADLESS: "true",  // true = niewidoczne okna, false = widoczne
   },
   error_file: `./logs/${accountData.username}.log`,
   time: false,

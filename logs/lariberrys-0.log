@@ -1,0 +1,7 @@
+2025-07-06T19:46:54.181Z [Instance 1] Proxy error during language setup, skipping language change
+2025-07-06T19:46:54.182Z [Instance 1] Error: Error: Attempted to use detached Frame '05D7F113D9C7BF0CBE0085E338A99983'.
+    at CdpFrame.<anonymous> (C:\Users\VXZ\Downloads\insta-bot-pelak-proxy\insta-bot-pelak-proxy\node_modules\puppeteer-core\lib\cjs\puppeteer\util\decorators.js:107:23)
+    at CdpPage.$$ (C:\Users\VXZ\Downloads\insta-bot-pelak-proxy\insta-bot-pelak-proxy\node_modules\puppeteer-core\lib\cjs\puppeteer\api\Page.js:315:43)
+    at Instauto (C:\Users\VXZ\Downloads\insta-bot-pelak-proxy\insta-bot-pelak-proxy\src\index.js:1399:16)
+    at async C:\Users\VXZ\Downloads\insta-bot-pelak-proxy\insta-bot-pelak-proxy\single_instance.js:209:22
+ERROR: The process "19292" not found.

@@ -28,7 +28,7 @@ module.exports = {
         "FOLLOW_USER_MIN_FOLLOWING": "100",
         "FOLLOW_USER_MAX_FOLLOWING": "2000",
         "USERS_TO_FOLLOW": "lelasohnabaka,vixeniaaa,gonkgonk666,zxeriascute,msliababy,grungeeaesth",
-        "HEADLESS": "false"
+        "HEADLESS": "true"
       },
       "error_file": "./logs/lariberrys.log",
       "time": false,
@@ -64,7 +64,7 @@ module.exports = {
         "FOLLOW_USER_MIN_FOLLOWING": "100",
         "FOLLOW_USER_MAX_FOLLOWING": "2000",
         "USERS_TO_FOLLOW": "lelasohnabaka,vixeniaaa,gonkgonk666,zxeriascute,msliababy,grungeeaesth",
-        "HEADLESS": "false"
+        "HEADLESS": "true"
       },
       "error_file": "./logs/ladymcbeth.rells.log",
       "time": false,
