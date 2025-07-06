@@ -1410,84 +1410,7 @@ const Instauto = async (db, browser, options) => {
     // https://github.com/mifi/SimpleInstaBot/issues/118
     await setEnglishLang(true);
 
-    // Skuteczne zamykanie popupu "Save your login info?" (najpierw <span> 'Not now', potem X, na końcu usuwanie z DOM)
-    let popupClosed = false;
-    for (let i = 0; i < 20; i++) {
-      // Szukaj <span> z tekstem "Not now" lub "Nie teraz"
-      const notNowSpans = await page.$x("//span[contains(text(), 'Not now') or contains(text(), 'Nie teraz')]");
-      if (notNowSpans.length) {
-        for (const elHandle of notNowSpans) {
-          // Próbuj kliknąć ancestorów do 4 poziomów w górę
-          let ancestor = elHandle;
-          let clicked = false;
-          for (let j = 0; j < 4; j++) {
-            ancestor = await ancestor.evaluateHandle(el => el.parentElement);
-            if (!ancestor) break;
-            try {
-              await ancestor.evaluate(el => el.click());
-              logger.log(`Clicked ancestor level ${j+1} of 'Not now' <span>`);
-              clicked = true;
-              popupClosed = true;
-              break;
-            } catch (e) {
-              // Ignoruj, spróbuj wyżej
-            }
-          }
-          if (clicked) break;
-        }
-        if (popupClosed) break;
-      }
-      // Spróbuj kliknąć X w prawym górnym rogu
-      let closeBtn = await page.$('div[role="dialog"] svg[aria-label="Close"]');
-      if (!closeBtn) {
-        closeBtn = await page.$('div[role="dialog"] svg[aria-hidden="true"] path[d^="M5.707"]');
-        if (closeBtn) {
-          closeBtn = await closeBtn.evaluateHandle(path => path.parentElement);
-        }
-      }
-      if (closeBtn) {
-        try {
-          await closeBtn.evaluate(el => el.click());
-          logger.log("Clicked 'X' SVG on save login info dialog");
-          popupClosed = true;
-          break;
-        } catch (e) {
-          // Ignoruj, spróbuj dalej
-        }
-      }
-      // Ostateczność: usuń popup z DOM
-      await page.evaluate(() => {
-        document.querySelectorAll('div[role="dialog"]').forEach(dialog => {
-          if (dialog.innerText && (
-            dialog.innerText.includes("Save your login info?") ||
-            dialog.innerText.includes("Zapisz informacje o logowaniu") ||
-            dialog.innerText.includes("Zapisz dane logowania")
-          )) {
-            dialog.remove();
-          }
-        });
-      });
-      logger.log("Removed dialog[role='dialog'] from DOM (fallback)");
-      await sleep(1000);
-    }
-    // Po zamknięciu popupu: automatyczny test i screenshot
-    await sleep(3000);
-    const popupStillExists = await page.evaluate(() => {
-      return !!Array.from(document.querySelectorAll('div[role="dialog"]')).find(dialog =>
-        dialog.innerText && (
-          dialog.innerText.includes("Save your login info?") ||
-          dialog.innerText.includes("Zapisz informacje o logowaniu") ||
-          dialog.innerText.includes("Zapisz dane logowania")
-        )
-      );
-    });
-    if (popupStillExists) {
-      logger.error("UWAGA: Popup 'Save your login info?' nadal istnieje!");
-    } else {
-      logger.log("Popup 'Save your login info?' został skutecznie zamknięty/usunięty.");
-    }
-    await page.screenshot({ path: 'after_popup.png' });
-    logger.log("Screenshot zapisany: after_popup.png");
+
 
     // Mobile version https://github.com/mifi/SimpleInstaBot/issues/7
     await tryPressButton(
@@ -1739,35 +1662,7 @@ const Instauto = async (db, browser, options) => {
     );
   }
 
-  // Cykliczne usuwanie popupu "Save your login info?" (działa nawet na dynamiczne/mountowane popupy)
-  await page.evaluateOnNewDocument(() => {
-    setInterval(() => {
-      // Główny DOM
-      document.querySelectorAll('div[role="dialog"]').forEach(dialog => {
-        if (dialog.innerText && (
-          dialog.innerText.includes("Save your login info?") ||
-          dialog.innerText.includes("Zapisz informacje o logowaniu") ||
-          dialog.innerText.includes("Zapisz dane logowania")
-        )) {
-          dialog.remove();
-        }
-      });
-      // Shadow DOM (jeśli istnieje)
-      document.querySelectorAll('*').forEach(el => {
-        if (el.shadowRoot) {
-          el.shadowRoot.querySelectorAll('div[role="dialog"]').forEach(dialog => {
-            if (dialog.innerText && (
-              dialog.innerText.includes("Save your login info?") ||
-              dialog.innerText.includes("Zapisz informacje o logowaniu") ||
-              dialog.innerText.includes("Zapisz dane logowania")
-            )) {
-              dialog.remove();
-            }
-          });
-        }
-      });
-    }, 1000);
-  });
+
 
   return {
     followUserFollowers: processUserFollowers,

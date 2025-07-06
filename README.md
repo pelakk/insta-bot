@@ -230,15 +230,7 @@ pm2 delete nazwa_konta
 "FOLLOW_USER_RATIO_MAX": "999999.0"
 ```
 
-### Obsługa popupów
 
-Bot automatycznie obsługuje popup "Save your login info?" poprzez:
-- Kliknięcie "Not now" / "Nie teraz"
-- Kliknięcie X (SVG)
-- Usuwanie popupu z DOM
-- MutationObserver
-- Cykliczne usuwanie co sekundę
-- Obsługa shadow DOM
 
 ---
 
