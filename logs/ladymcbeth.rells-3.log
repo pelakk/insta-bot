@@ -1,0 +1,49 @@
+No followed database found
+No unfollowed database found
+No likes database found
+2025-07-06T02:48:49.893Z [Instance 4] Proxy error during language setup, skipping language change
+2025-07-06T02:48:55.699Z [Instance 4] WARNING: Login has not succeeded. This could be because of an invalid sessionid or a "suspicious login attempt"-message. You need to manually complete the process, or if really logged in, click the Instagram logo in the top left to go to the Home page.
+2025-07-06T02:49:34.455Z [Instance 4] Error: Error: Attempted to use detached Frame 'AF34C068068754AC2B6B0ABC963A7947'.
+    at CdpFrame.<anonymous> (C:\Users\VXZ\Documents\inst\insta-bot\node_modules\puppeteer-core\lib\cjs\puppeteer\util\decorators.js:107:23)
+    at CdpPage.$$ (C:\Users\VXZ\Documents\inst\insta-bot\node_modules\puppeteer-core\lib\cjs\puppeteer\api\Page.js:315:43)
+    at isLoggedIn (C:\Users\VXZ\Documents\inst\insta-bot\src\index.js:645:17)
+    at Instauto (C:\Users\VXZ\Documents\inst\insta-bot\src\index.js:1383:20)
+    at async C:\Users\VXZ\Documents\inst\insta-bot\single_instance.js:223:22
+No followed database found
+No unfollowed database found
+No likes database found
+2025-07-06T02:52:32.542Z [Instance 2] Error: SyntaxError: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+    at JSON.parse (<anonymous>)
+    at getUserDataFromInterceptedRequest (C:\Users\VXZ\Documents\inst\insta-bot\src\index.js:425:27)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async navigateToUserAndGetData (C:\Users\VXZ\Documents\inst\insta-bot\src\index.js:444:16)
+    at async Instauto (C:\Users\VXZ\Documents\inst\insta-bot\src\index.js:1524:28)
+    at async C:\Users\VXZ\Documents\inst\insta-bot\single_instance.js:223:22
+2025-07-06T02:53:23.831Z [Instance 2] Error: SyntaxError: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+    at JSON.parse (<anonymous>)
+    at getUserDataFromInterceptedRequest (C:\Users\VXZ\Documents\inst\insta-bot\src\index.js:425:27)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async navigateToUserAndGetData (C:\Users\VXZ\Documents\inst\insta-bot\src\index.js:444:16)
+    at async Instauto (C:\Users\VXZ\Documents\inst\insta-bot\src\index.js:1524:28)
+    at async C:\Users\VXZ\Documents\inst\insta-bot\single_instance.js:223:22
+2025-07-06T02:57:51.078Z [Instance 2] Error: SyntaxError: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+    at JSON.parse (<anonymous>)
+    at getUserDataFromInterceptedRequest (C:\Users\VXZ\Documents\inst\insta-bot\src\index.js:425:27)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async navigateToUserAndGetData (C:\Users\VXZ\Documents\inst\insta-bot\src\index.js:444:16)
+    at async Instauto (C:\Users\VXZ\Documents\inst\insta-bot\src\index.js:1524:28)
+    at async C:\Users\VXZ\Documents\inst\insta-bot\single_instance.js:223:22
+2025-07-06T02:58:51.193Z [Instance 2] Error: SyntaxError: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+    at JSON.parse (<anonymous>)
+    at getUserDataFromInterceptedRequest (C:\Users\VXZ\Documents\inst\insta-bot\src\index.js:425:27)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async navigateToUserAndGetData (C:\Users\VXZ\Documents\inst\insta-bot\src\index.js:444:16)
+    at async Instauto (C:\Users\VXZ\Documents\inst\insta-bot\src\index.js:1524:28)
+    at async C:\Users\VXZ\Documents\inst\insta-bot\single_instance.js:223:22
+2025-07-06T02:59:45.946Z [Instance 2] Error: SyntaxError: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+    at JSON.parse (<anonymous>)
+    at getUserDataFromInterceptedRequest (C:\Users\VXZ\Documents\inst\insta-bot\src\index.js:425:27)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async navigateToUserAndGetData (C:\Users\VXZ\Documents\inst\insta-bot\src\index.js:444:16)
+    at async Instauto (C:\Users\VXZ\Documents\inst\insta-bot\src\index.js:1524:28)
+    at async C:\Users\VXZ\Documents\inst\insta-bot\single_instance.js:223:22

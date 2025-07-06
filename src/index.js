@@ -378,17 +378,22 @@ const Instauto = async (db, browser, options) => {
         logger.log("Unable to intercept request, will send manually");
         try {
           await page.evaluate(async (username2) => {
-            const response = await window.fetch(
-              `https://i.instagram.com/api/v1/users/web_profile_info/?username=${encodeURIComponent(
-                username2.toLowerCase()
-              )}`,
-              {
-                mode: "cors",
-                credentials: "include",
-                headers: { "x-ig-app-id": "936619743392459" },
-              }
-            );
-            await response.json(); // else it will not finish the request
+            try {
+              const response = await window.fetch(
+                `https://i.instagram.com/api/v1/users/web_profile_info/?username=${encodeURIComponent(
+                  username2.toLowerCase()
+                )}`,
+                {
+                  mode: "cors",
+                  credentials: "include",
+                  headers: { "x-ig-app-id": "936619743392459" },
+                }
+              );
+              await response.json(); // else it will not finish the request
+            } catch (fetchError) {
+              // Silently ignore fetch errors - they're expected when API is not available
+              console.log("Fetch failed, continuing with fallback methods");
+            }
           }, username);
           // todo `https://i.instagram.com/api/v1/users/${userId}/info/`
           // https://www.javafixing.com/2022/07/fixed-can-get-instagram-profile-picture.html?m=1
@@ -441,6 +446,8 @@ const Instauto = async (db, browser, options) => {
       userDataCache[username] = userData;
       return userData;
     }
+
+
 
     return undefined;
   }
@@ -1244,9 +1251,19 @@ const Instauto = async (db, browser, options) => {
       // when logged in, we need to go to account in order to be able to check/set language
       // (need to see the footer)
       if (assumeLoggedIn) {
-        await gotoUrl(`${instagramBaseUrl}/accounts/edit/`);
+        try {
+          await gotoUrl(`${instagramBaseUrl}/accounts/edit/`);
+        } catch (proxyError) {
+          logger.warn("Proxy error during language setup, skipping language change");
+          return;
+        }
       } else {
-        await goHome();
+        try {
+          await goHome();
+        } catch (proxyError) {
+          logger.warn("Proxy error during language setup, skipping language change");
+          return;
+        }
       }
       await sleep(3000);
       const elementHandles = await page.$$(
@@ -1413,17 +1430,95 @@ const Instauto = async (db, browser, options) => {
   );
 
   try {
-    // eslint-disable-next-line no-underscore-dangle
-    const detectedUsername = await page.evaluate(
-      () => window._sharedData.config.viewer.username
-    );
-    if (detectedUsername) myUsername = detectedUsername;
+    // First try to navigate to profile page to get better access to username
+    try {
+      await gotoUrl(`${instagramBaseUrl}/accounts/activity/`);
+      await sleep(2000);
+    } catch (err) {
+      logger.warn("Could not navigate to activity page, trying alternative methods");
+    }
+    
+    // Try multiple methods to detect username
+    const detectedUsername = await page.evaluate(() => {
+      // Method 1: Try the old _sharedData approach
+      if (window._sharedData && window._sharedData.config && window._sharedData.config.viewer) {
+        return window._sharedData.config.viewer.username;
+      }
+      
+      // Method 2: Try to get from meta tags
+      const metaUsername = document.querySelector('meta[property="og:url"]');
+      if (metaUsername && metaUsername.content) {
+        const match = metaUsername.content.match(/instagram\.com\/([^\/\?]+)/);
+        if (match && match[1] && match[1] !== 'p' && match[1] !== 'explore' && match[1] !== 'reels') {
+          return match[1];
+        }
+      }
+      
+      // Method 3: Try to get from the profile link in navigation
+      const profileLink = document.querySelector('a[href^="/"][href$="/"]');
+      if (profileLink && profileLink.href) {
+        const match = profileLink.href.match(/instagram\.com\/([^\/\?]+)/);
+        if (match && match[1] && match[1] !== 'p' && match[1] !== 'explore' && match[1] !== 'reels') {
+          return match[1];
+        }
+      }
+      
+      // Method 4: Try to get from any link that looks like a profile
+      const allLinks = Array.from(document.querySelectorAll('a[href^="/"]'));
+      for (const link of allLinks) {
+        const href = link.getAttribute('href');
+        if (href && href.match(/^\/[^\/\?]+$/) && href !== '/') {
+          const username = href.substring(1);
+          if (username && username !== 'p' && username !== 'explore' && username !== 'reels' && username !== 'accounts') {
+            return username;
+          }
+        }
+      }
+      
+      // Method 5: Try to get from current URL if we're on a profile page
+      const currentUrl = window.location.href;
+      const urlMatch = currentUrl.match(/instagram\.com\/([^\/\?]+)/);
+      if (urlMatch && urlMatch[1] && urlMatch[1] !== 'p' && urlMatch[1] !== 'explore' && urlMatch[1] !== 'reels' && urlMatch[1] !== 'accounts') {
+        return urlMatch[1];
+      }
+      
+      // Method 6: Try to get from profile picture alt text or aria-label
+      const profilePic = document.querySelector('img[alt*="@"]');
+      if (profilePic && profilePic.alt) {
+        const altMatch = profilePic.alt.match(/@([a-zA-Z0-9._]+)/);
+        if (altMatch && altMatch[1]) {
+          return altMatch[1];
+        }
+      }
+      
+      // Method 7: Try to get from any element with aria-label containing username
+      const ariaElements = document.querySelectorAll('[aria-label*="@"]');
+      for (const element of ariaElements) {
+        const ariaMatch = element.getAttribute('aria-label').match(/@([a-zA-Z0-9._]+)/);
+        if (ariaMatch && ariaMatch[1]) {
+          return ariaMatch[1];
+        }
+      }
+      
+      return null;
+    });
+    
+    if (detectedUsername) {
+      myUsername = detectedUsername;
+      logger.log(`Detected username: ${detectedUsername}`);
+    }
   } catch (err) {
     logger.error("Failed to detect username", err);
   }
 
   if (!myUsername) {
-    throw new Error("Don't know what's my username");
+    // Try to get username from environment variable as last resort
+    if (process.env.INSTAGRAM_USERNAME) {
+      myUsername = process.env.INSTAGRAM_USERNAME;
+      logger.log(`Using username from environment variable: ${myUsername}`);
+    } else {
+      throw new Error("Don't know what's my username. Please set INSTAGRAM_USERNAME environment variable or ensure you're logged in to Instagram.");
+    }
   }
 
   const { id: myUserId } = await navigateToUserAndGetData(myUsername);

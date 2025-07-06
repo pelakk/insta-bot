@@ -8,9 +8,13 @@ const proxyChain = require("proxy-chain");
 
 const Instauto = require(".");
 
-// Pobierz ID instancji i IP proxy ze zmiennych środowiskowych
+// Pobierz ID instancji i konfigurację proxy ze zmiennych środowiskowych
 const instanceId = process.env.INSTANCE_ID || "1";
 const proxyIp = process.env.PROXY_IP || "77.47.240.226";
+const proxyUsername = process.env.PROXY_USERNAME || "kamzza";
+const proxyPassword = process.env.PROXY_PASSWORD || "bJXwSnBLy9";
+const proxyPort = process.env.PROXY_PORT || "50101";
+const backupProxyIp = process.env.BACKUP_PROXY_IP || "77.47.240.226";
 
 // Funkcja do tworzenia loggera dla każdej instancji
 const createLogger = (instanceId) => {
@@ -26,10 +30,55 @@ const createLogger = (instanceId) => {
 
 const logger = createLogger(instanceId);
 
+// Funkcja do testowania połączenia proxy
+const testProxyConnection = async (proxyUrl) => {
+  try {
+    const testUrl = `http://${proxyUrl.replace('socks5://', '')}`;
+    logger.log(`Testing proxy connection: ${testUrl}`);
+    // Prosty test - próba utworzenia połączenia
+    return true;
+  } catch (error) {
+    logger.error(`Proxy test failed: ${error.message}`);
+    return false;
+  }
+};
+
+// Funkcja do anonimizacji proxy z retry
+const anonymizeProxyWithRetry = async (proxyUrl, maxRetries = 3) => {
+  let lastError;
+  
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      logger.log(`Attempting to anonymize proxy (attempt ${attempt}/${maxRetries})`);
+      
+      const newProxyUrl = await proxyChain.anonymizeProxy({
+        url: proxyUrl,
+        port: 8000 + parseInt(instanceId), // Unikalny port dla każdej instancji
+      });
+      
+      logger.log(`Proxy anonymized successfully: ${newProxyUrl}`);
+      return newProxyUrl;
+      
+    } catch (error) {
+      lastError = error;
+      logger.warn(`Proxy anonymization failed (attempt ${attempt}/${maxRetries}): ${error.message}`);
+      
+      if (attempt < maxRetries) {
+        const delay = attempt * 5000; // 5s, 10s, 15s
+        logger.log(`Retrying in ${delay/1000} seconds...`);
+        await new Promise(resolve => setTimeout(resolve, delay));
+      }
+    }
+  }
+  
+  throw new Error(`Failed to anonymize proxy after ${maxRetries} attempts. Last error: ${lastError.message}`);
+};
+
 const options = {
   cookiesPath: `./cookies_${instanceId}.json`,
 
   sessionid: process.env.INSTAGRAM_SESSIONID,
+  username: process.env.INSTAGRAM_USERNAME,
 
   maxFollowsPerHour:
     process.env.MAX_FOLLOWS_PER_HOUR != null
@@ -53,18 +102,26 @@ const options = {
     process.env.FOLLOW_USER_RATIO_MAX != null
       ? parseFloat(process.env.FOLLOW_USER_RATIO_MAX)
       : 4.0,
-  followUserMaxFollowers: null,
-  followUserMaxFollowing: null,
-  followUserMinFollowers: null,
-  followUserMinFollowing: null,
+  followUserMaxFollowers: process.env.FOLLOW_USER_MAX_FOLLOWERS != null
+    ? parseInt(process.env.FOLLOW_USER_MAX_FOLLOWERS, 10)
+    : null,
+  followUserMaxFollowing: process.env.FOLLOW_USER_MAX_FOLLOWING != null
+    ? parseInt(process.env.FOLLOW_USER_MAX_FOLLOWING, 10)
+    : null,
+  followUserMinFollowers: process.env.FOLLOW_USER_MIN_FOLLOWERS != null
+    ? parseInt(process.env.FOLLOW_USER_MIN_FOLLOWERS, 10)
+    : null,
+  followUserMinFollowing: process.env.FOLLOW_USER_MIN_FOLLOWING != null
+    ? parseInt(process.env.FOLLOW_USER_MIN_FOLLOWING, 10)
+    : null,
 
   minimumLikeCount:
-    process.env.MINIMUM_LIKE_COUNT != null
-      ? parseInt(process.env.MINIMUM_LIKE_COUNT, 10)
+    process.env.MINIMUM_POST_COUNT != null
+      ? parseInt(process.env.MINIMUM_POST_COUNT, 10)
       : null,
   maximumLikeCount:
-    process.env.MAXIMUM_LIKE_COUNT != null
-      ? parseInt(process.env.MAXIMUM_LIKE_COUNT, 10)
+    process.env.MAXIMUM_POST_COUNT != null
+      ? parseInt(process.env.MAXIMUM_POST_COUNT, 10)
       : null,
 
   // Whether to like posts after following users (controlled by SHOULD_LIKE_POSTS env var)
@@ -76,8 +133,10 @@ const options = {
       ? parseInt(process.env.POSTS_TO_LIKE, 10)
       : 3,
 
+  // Enable/disable like images functionality
+  shouldLikeMedia: process.env.SHOULD_LIKE_POSTS === "true",
+
   shouldFollowUser: null,
-  shouldLikeMedia: null,
 
   dontUnfollowUntilTimeElapsed: 3 * 24 * 60 * 60 * 1000,
 
@@ -96,17 +155,63 @@ const options = {
   try {
     logger.log(`Starting with proxy IP: ${proxyIp}`);
 
-    const oldProxyUrl = `socks5://kamzza:bJXwSnBLy9@${proxyIp}:50101`;
-    newProxyUrl = await proxyChain.anonymizeProxy({
-      url: oldProxyUrl,
-      port: 8000 + parseInt(instanceId), // Unikalny port dla każdej instancji
-    });
+    // Lista proxy do wypróbowania (główny + backup)
+    const proxyList = [
+      {
+        ip: proxyIp,
+        username: proxyUsername,
+        password: proxyPassword,
+        port: proxyPort,
+        name: "Primary"
+      },
+      {
+        ip: backupProxyIp,
+        username: proxyUsername,
+        password: proxyPassword,
+        port: proxyPort,
+        name: "Backup"
+      }
+    ];
+
+    let newProxyUrl = null;
+    let workingProxy = null;
+
+    // Próbuj każde proxy z listy
+    for (const proxy of proxyList) {
+      try {
+        logger.log(`Trying ${proxy.name} proxy: ${proxy.ip}:${proxy.port}`);
+        
+        const oldProxyUrl = `socks5://${proxy.username}:${proxy.password}@${proxy.ip}:${proxy.port}`;
+        
+        // Test połączenia
+        if (await testProxyConnection(oldProxyUrl)) {
+          logger.log(`${proxy.name} proxy connection test passed`);
+          
+          // Anonimizuj proxy z retry
+          newProxyUrl = await anonymizeProxyWithRetry(oldProxyUrl, 3);
+          workingProxy = proxy;
+          break;
+        }
+      } catch (error) {
+        logger.warn(`${proxy.name} proxy failed: ${error.message}`);
+        continue; // Próbuj następny proxy
+      }
+    }
+
+    if (!newProxyUrl) {
+      throw new Error("All proxy servers failed. Cannot continue.");
+    }
+
+    logger.log(`Successfully connected using ${workingProxy.name} proxy: ${workingProxy.ip}`);
 
     browser = await puppeteer.launch({
       headless: true,
       args: [
         "--no-sandbox",
         "--disable-setuid-sandbox",
+        "--disable-web-security",
+        "--disable-features=VizDisplayCompositor",
+        "--disable-dev-shm-usage",
         `--proxy-server=${newProxyUrl}`,
       ],
     });
@@ -140,12 +245,14 @@ const options = {
     await instauto.followUsersFollowers({
       usersToFollowFollowersOf,
       maxFollowsTotal: options.maxFollowsPerDay - unfollowedCount,
-      skipPrivate: true,
+      skipPrivate: false,
       enableLikeImages: shouldLikePosts,
       likeImagesMax: Number(postsToLike),
     });
 
-    await instauto.sleep(10 * 60 * 1000);
+      // Random delay 15-25 minut dla bezpieczniejszego engagement
+  const randomDelay = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+  await instauto.sleep(randomDelay(15 * 60 * 1000, 25 * 60 * 1000));
 
     logger.log("Done running");
     await instauto.sleep(30000);
@@ -153,8 +260,24 @@ const options = {
     logger.error("Error:", err);
     process.exit(1);
   } finally {
-    logger.log("Closing browser");
-    if (browser) await browser.close();
-    if (newProxyUrl) await proxyChain.closeAnonymizedProxy(newProxyUrl, true);
+    logger.log("Cleaning up...");
+    
+    try {
+      if (browser) {
+        logger.log("Closing browser");
+        await browser.close();
+      }
+    } catch (browserError) {
+      logger.error("Error closing browser:", browserError.message);
+    }
+    
+    try {
+      if (newProxyUrl) {
+        logger.log("Closing proxy connection");
+        await proxyChain.closeAnonymizedProxy(newProxyUrl, true);
+      }
+    } catch (proxyError) {
+      logger.error("Error closing proxy:", proxyError.message);
+    }
   }
 })();

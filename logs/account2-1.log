@@ -1,0 +1,11 @@
+2025-07-06T02:43:40.310Z [Instance 2] WARNING: Login has not succeeded. This could be because of an invalid sessionid or a "suspicious login attempt"-message. You need to manually complete the process, or if really logged in, click the Instagram logo in the top left to go to the Home page.
+2025-07-06T02:45:46.171Z [Instance 2] WARNING: Login has not succeeded. This could be because of an invalid sessionid or a "suspicious login attempt"-message. You need to manually complete the process, or if really logged in, click the Instagram logo in the top left to go to the Home page.
+2025-07-06T02:48:03.808Z [Instance 2] WARNING: Login has not succeeded. This could be because of an invalid sessionid or a "suspicious login attempt"-message. You need to manually complete the process, or if really logged in, click the Instagram logo in the top left to go to the Home page.
+2025-07-06T02:48:49.450Z [Instance 2] Proxy error during language setup, skipping language change
+2025-07-06T02:48:56.706Z [Instance 2] WARNING: Login has not succeeded. This could be because of an invalid sessionid or a "suspicious login attempt"-message. You need to manually complete the process, or if really logged in, click the Instagram logo in the top left to go to the Home page.
+2025-07-06T02:49:32.461Z [Instance 2] Error: Error: Attempted to use detached Frame '69005B5B748A817F639E06F8CB4D7924'.
+    at CdpFrame.<anonymous> (C:\Users\VXZ\Documents\inst\insta-bot\node_modules\puppeteer-core\lib\cjs\puppeteer\util\decorators.js:107:23)
+    at CdpPage.$$ (C:\Users\VXZ\Documents\inst\insta-bot\node_modules\puppeteer-core\lib\cjs\puppeteer\api\Page.js:315:43)
+    at isLoggedIn (C:\Users\VXZ\Documents\inst\insta-bot\src\index.js:645:17)
+    at Instauto (C:\Users\VXZ\Documents\inst\insta-bot\src\index.js:1383:20)
+    at async C:\Users\VXZ\Documents\inst\insta-bot\single_instance.js:223:22
