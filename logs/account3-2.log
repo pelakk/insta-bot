@@ -1,0 +1,26 @@
+No followed database found
+No unfollowed database found
+No likes database found
+2025-07-06T02:43:46.443Z [Instance 3] WARNING: Login has not succeeded. This could be because of an invalid sessionid or a "suspicious login attempt"-message. You need to manually complete the process, or if really logged in, click the Instagram logo in the top left to go to the Home page.
+No followed database found
+No unfollowed database found
+No likes database found
+2025-07-06T02:45:47.753Z [Instance 3] WARNING: Login has not succeeded. This could be because of an invalid sessionid or a "suspicious login attempt"-message. You need to manually complete the process, or if really logged in, click the Instagram logo in the top left to go to the Home page.
+No followed database found
+No unfollowed database found
+No likes database found
+2025-07-06T02:48:02.070Z [Instance 3] WARNING: Login has not succeeded. This could be because of an invalid sessionid or a "suspicious login attempt"-message. You need to manually complete the process, or if really logged in, click the Instagram logo in the top left to go to the Home page.
+No followed database found
+No unfollowed database found
+No likes database found
+2025-07-06T02:48:50.635Z [Instance 3] Proxy error during language setup, skipping language change
+2025-07-06T02:48:59.953Z [Instance 3] WARNING: Login has not succeeded. This could be because of an invalid sessionid or a "suspicious login attempt"-message. You need to manually complete the process, or if really logged in, click the Instagram logo in the top left to go to the Home page.
+2025-07-06T02:49:30.718Z [Instance 3] Error: Error: Attempted to use detached Frame 'A150AE3417BA004787FFC6EE6FD843FD'.
+    at CdpFrame.<anonymous> (C:\Users\VXZ\Documents\inst\insta-bot\node_modules\puppeteer-core\lib\cjs\puppeteer\util\decorators.js:107:23)
+    at CdpPage.$$ (C:\Users\VXZ\Documents\inst\insta-bot\node_modules\puppeteer-core\lib\cjs\puppeteer\api\Page.js:315:43)
+    at isLoggedIn (C:\Users\VXZ\Documents\inst\insta-bot\src\index.js:645:17)
+    at Instauto (C:\Users\VXZ\Documents\inst\insta-bot\src\index.js:1383:20)
+    at async C:\Users\VXZ\Documents\inst\insta-bot\single_instance.js:223:22
+No followed database found
+No unfollowed database found
+No likes database found

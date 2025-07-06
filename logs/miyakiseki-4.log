@@ -1,0 +1,7 @@
+2025-07-06T03:13:23.482Z [Instance 2] Cannot find text "zxeriascute" on page
+2025-07-06T03:13:23.482Z [Instance 2] Failed to process user followers, continuing zxeriascute Error: User not found
+    at navigateToUserWithCheck (C:\Users\VXZ\Documents\inst\insta-bot\src\index.js:329:50)
+    at async navigateToUserAndGetData (C:\Users\VXZ\Documents\inst\insta-bot\src\index.js:434:5)
+    at async processUserFollowers (C:\Users\VXZ\Documents\inst\insta-bot\src\index.js:1044:28)
+    at async Object.processUsersFollowers [as followUsersFollowers] (C:\Users\VXZ\Documents\inst\insta-bot\src\index.js:1118:9)
+    at async C:\Users\VXZ\Documents\inst\insta-bot\single_instance.js:242:5

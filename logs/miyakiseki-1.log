@@ -1,0 +1,4 @@
+2025-07-06T14:35:45.629Z [Instance 2] Failed to set language, trying fallback (cookie) Error: Language selector not found
+    at setLang (C:\Users\VXZ\Downloads\insta-bot-pelak-proxy\insta-bot-pelak-proxy\src\index.js:1291:15)
+    at async Instauto (C:\Users\VXZ\Downloads\insta-bot-pelak-proxy\insta-bot-pelak-proxy\src\index.js:1346:3)
+    at async C:\Users\VXZ\Downloads\insta-bot-pelak-proxy\insta-bot-pelak-proxy\single_instance.js:227:22
