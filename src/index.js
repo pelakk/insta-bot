@@ -950,6 +950,7 @@ const Instauto = async (db, browser, options) => {
     // logger.log('followedByCount:', followedByCount, 'followsCount:', followsCount);
 
     const ratio = followedByCount / (followsCount || 1);
+    logger.log(`User ${username} ratio: ${ratio.toFixed(2)} (${followedByCount} followers / ${followsCount} following)`);
 
     if (isPrivate && skipPrivate) {
       logger.log("User is private, skipping");
@@ -978,7 +979,7 @@ const Instauto = async (db, browser, options) => {
       (followUserRatioMin != null && ratio < followUserRatioMin)
     ) {
       logger.log(
-        "User has too many followers compared to follows or opposite, skipping"
+        `User ${username} ratio ${ratio.toFixed(2)} is outside range ${followUserRatioMin}-${followUserRatioMax}, skipping`
       );
       return false;
     }

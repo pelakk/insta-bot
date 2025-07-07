@@ -16,6 +16,9 @@ const proxyUsername = process.env.PROXY_USERNAME || "kamzza";
 const proxyPassword = process.env.PROXY_PASSWORD || "bJXwSnBLy9";
 const proxyPort = process.env.PROXY_PORT || "50101";
 const backupProxyIp = process.env.BACKUP_PROXY_IP || "77.47.240.226";
+const backupProxyPort = process.env.BACKUP_PROXY_PORT || "50101";
+const backupProxyUsername = process.env.BACKUP_PROXY_USERNAME || "kamzza";
+const backupProxyPassword = process.env.BACKUP_PROXY_PASSWORD || "bJXwSnBLy9";
 
 // Funkcja do tworzenia loggera dla każdej instancji
 const createLogger = (instanceId) => {
@@ -146,9 +149,9 @@ const options = {
       },
       {
         ip: backupProxyIp,
-        username: proxyUsername,
-        password: proxyPassword,
-        port: proxyPort,
+        username: backupProxyUsername,
+        password: backupProxyPassword,
+        port: backupProxyPort,
         name: "Backup"
       }
     ];

@@ -25,25 +25,25 @@ const accountTemplate = (accountData, index) => ({
     MAX_FOLLOWS_PER_DAY: "300",
     MAX_LIKES_PER_DAY: "40",
 
-    // OPTIMAL ENGAGEMENT FILTERS
-    FOLLOW_USER_RATIO_MIN: "0.2",
-    FOLLOW_USER_RATIO_MAX: "5.0",
-    MINIMUM_POST_COUNT: "3",
-    MAXIMUM_POST_COUNT: "500",
+    // SELECTIVE ENGAGEMENT FILTERS
+      FOLLOW_USER_RATIO_MIN: "1.2",
+  FOLLOW_USER_RATIO_MAX: "3.5",
+    MINIMUM_POST_COUNT: "2",
+    MAXIMUM_POST_COUNT: "300",
     SHOULD_LIKE_POSTS: "true",
     POSTS_TO_LIKE: "2",
     
-    // SAFE FOLLOWER TARGETING (200-10000 followers)
-    FOLLOW_USER_MIN_FOLLOWERS: "200",
-    FOLLOW_USER_MAX_FOLLOWERS: "10000",
-    FOLLOW_USER_MIN_FOLLOWING: "100",
-    FOLLOW_USER_MAX_FOLLOWING: "2000",
+    // QUALITY FOLLOWER TARGETING (500-5000 followers)
+    FOLLOW_USER_MIN_FOLLOWERS: "500",
+    FOLLOW_USER_MAX_FOLLOWERS: "5000",
+    FOLLOW_USER_MIN_FOLLOWING: "200",
+    FOLLOW_USER_MAX_FOLLOWING: "1000",
 
     // ENGAGEMENT-OPTIMIZED TARGET USERS
     USERS_TO_FOLLOW: "lelasohnabaka,vixeniaaa,gonkgonk666,zxeriascute,msliababy,grungeeaesth",
     
     // BROWSER SETTINGS
-    HEADLESS: "true",  // true = niewidoczne okna, false = widoczne
+    HEADLESS: "true",  // false = widoczne okna, true = niewidoczne
   },
   error_file: `./logs/${accountData.username}.log`,
   time: false,

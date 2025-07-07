@@ -18,3 +18,89 @@ Reason: Brak dzia�aj�cego wyst�pienia zadania.
     at setLang (C:\Users\VXZ\Downloads\insta-bot-pelak-proxy\insta-bot-pelak-proxy\src\index.js:1289:15)
     at async Instauto (C:\Users\VXZ\Downloads\insta-bot-pelak-proxy\insta-bot-pelak-proxy\src\index.js:1344:3)
     at async C:\Users\VXZ\Downloads\insta-bot-pelak-proxy\insta-bot-pelak-proxy\single_instance.js:209:22
+2025-07-06T20:16:25.412Z [Instance 2] Failed to set language, trying fallback (cookie) Error: Language selector not found
+    at setLang (C:\Users\VXZ\Downloads\insta-bot-pelak-proxy\insta-bot-pelak-proxy\src\index.js:1289:15)
+    at async Instauto (C:\Users\VXZ\Downloads\insta-bot-pelak-proxy\insta-bot-pelak-proxy\src\index.js:1344:3)
+    at async C:\Users\VXZ\Downloads\insta-bot-pelak-proxy\insta-bot-pelak-proxy\single_instance.js:209:22
+2025-07-06T20:22:29.076Z [Instance 2] Failed to set language, trying fallback (cookie) Error: Language selector not found
+    at setLang (C:\Users\VXZ\Downloads\insta-bot-pelak-proxy\insta-bot-pelak-proxy\src\index.js:1289:15)
+    at async Instauto (C:\Users\VXZ\Downloads\insta-bot-pelak-proxy\insta-bot-pelak-proxy\src\index.js:1344:3)
+    at async C:\Users\VXZ\Downloads\insta-bot-pelak-proxy\insta-bot-pelak-proxy\single_instance.js:209:22
+2025-07-06T20:22:32.909Z [Instance 2] Error: Error: Navigating frame was detached
+    at #onFrameDetached (C:\Users\VXZ\Downloads\insta-bot-pelak-proxy\insta-bot-pelak-proxy\node_modules\puppeteer-core\lib\cjs\puppeteer\cdp\LifecycleWatcher.js:103:47)
+    at C:\Users\VXZ\Downloads\insta-bot-pelak-proxy\insta-bot-pelak-proxy\node_modules\puppeteer-core\lib\cjs\third_party\mitt\mitt.js:62:7
+    at Array.map (<anonymous>)
+    at Object.emit (C:\Users\VXZ\Downloads\insta-bot-pelak-proxy\insta-bot-pelak-proxy\node_modules\puppeteer-core\lib\cjs\third_party\mitt\mitt.js:61:20)
+    at CdpFrame.emit (C:\Users\VXZ\Downloads\insta-bot-pelak-proxy\insta-bot-pelak-proxy\node_modules\puppeteer-core\lib\cjs\puppeteer\common\EventEmitter.js:83:23)
+    at #removeFramesRecursively (C:\Users\VXZ\Downloads\insta-bot-pelak-proxy\insta-bot-pelak-proxy\node_modules\puppeteer-core\lib\cjs\puppeteer\cdp\FrameManager.js:455:15)
+    at #onClientDisconnect (C:\Users\VXZ\Downloads\insta-bot-pelak-proxy\insta-bot-pelak-proxy\node_modules\puppeteer-core\lib\cjs\puppeteer\cdp\FrameManager.js:99:42)
+ERROR: The process with PID 10068 (child process of PID 35716) could not be terminated.
+Reason: Operacja, kt�rej pr�bowano, nie jest obs�ugiwana.
+ERROR: The process with PID 35716 (child process of PID 36024) could not be terminated.
+Reason: Brak dzia�aj�cego wyst�pienia zadania.
+2025-07-06T20:39:49.790Z [Instance 2] Failed to set language, trying fallback (cookie) Error: Language selector not found
+    at setLang (C:\Users\VXZ\Downloads\insta-bot-pelak-proxy\insta-bot-pelak-proxy\src\index.js:1344:15)
+    at async Instauto (C:\Users\VXZ\Downloads\insta-bot-pelak-proxy\insta-bot-pelak-proxy\src\index.js:1399:3)
+    at async C:\Users\VXZ\Downloads\insta-bot-pelak-proxy\insta-bot-pelak-proxy\single_instance.js:209:22
+2025-07-06T20:40:26.172Z [Instance 2] Error: TypeError: Cannot destructure property 'id' of '(intermediate value)' as it is undefined.
+    at Instauto (C:\Users\VXZ\Downloads\insta-bot-pelak-proxy\insta-bot-pelak-proxy\src\index.js:1644:15)
+    at async C:\Users\VXZ\Downloads\insta-bot-pelak-proxy\insta-bot-pelak-proxy\single_instance.js:209:22
+2025-07-06T20:40:58.563Z [Instance 2] Failed to set language, trying fallback (cookie) Error: Language selector not found
+    at setLang (C:\Users\VXZ\Downloads\insta-bot-pelak-proxy\insta-bot-pelak-proxy\src\index.js:1344:15)
+    at async Instauto (C:\Users\VXZ\Downloads\insta-bot-pelak-proxy\insta-bot-pelak-proxy\src\index.js:1399:3)
+    at async C:\Users\VXZ\Downloads\insta-bot-pelak-proxy\insta-bot-pelak-proxy\single_instance.js:209:22
+2025-07-06T20:41:36.866Z [Instance 2] Error: TypeError: Cannot destructure property 'id' of '(intermediate value)' as it is undefined.
+    at Instauto (C:\Users\VXZ\Downloads\insta-bot-pelak-proxy\insta-bot-pelak-proxy\src\index.js:1644:15)
+    at async C:\Users\VXZ\Downloads\insta-bot-pelak-proxy\insta-bot-pelak-proxy\single_instance.js:209:22
+2025-07-06T20:42:04.397Z [Instance 2] Failed to set language, trying fallback (cookie) Error: Language selector not found
+    at setLang (C:\Users\VXZ\Downloads\insta-bot-pelak-proxy\insta-bot-pelak-proxy\src\index.js:1344:15)
+    at async Instauto (C:\Users\VXZ\Downloads\insta-bot-pelak-proxy\insta-bot-pelak-proxy\src\index.js:1399:3)
+    at async C:\Users\VXZ\Downloads\insta-bot-pelak-proxy\insta-bot-pelak-proxy\single_instance.js:209:22
+2025-07-07T00:08:00.765Z [Instance 2] Cannot find text "ladymcbeth.rells" on page
+2025-07-07T00:08:00.766Z [Instance 2] Error: Error: User not found
+    at navigateToUserWithCheck (C:\Users\VXZ\Downloads\insta-bot-pelak-proxy\insta-bot-pelak-proxy\src\index.js:330:50)
+    at async navigateToUserAndGetData (C:\Users\VXZ\Downloads\insta-bot-pelak-proxy\insta-bot-pelak-proxy\src\index.js:435:5)
+    at async Instauto (C:\Users\VXZ\Downloads\insta-bot-pelak-proxy\insta-bot-pelak-proxy\src\index.js:1677:28)
+    at async C:\Users\VXZ\Downloads\insta-bot-pelak-proxy\insta-bot-pelak-proxy\single_instance.js:209:22
+2025-07-07T00:08:38.662Z [Instance 2] Cannot find text "ladymcbeth.rells" on page
+2025-07-07T00:08:38.662Z [Instance 2] Error: Error: User not found
+    at navigateToUserWithCheck (C:\Users\VXZ\Downloads\insta-bot-pelak-proxy\insta-bot-pelak-proxy\src\index.js:330:50)
+    at async navigateToUserAndGetData (C:\Users\VXZ\Downloads\insta-bot-pelak-proxy\insta-bot-pelak-proxy\src\index.js:435:5)
+    at async Instauto (C:\Users\VXZ\Downloads\insta-bot-pelak-proxy\insta-bot-pelak-proxy\src\index.js:1644:28)
+    at async C:\Users\VXZ\Downloads\insta-bot-pelak-proxy\insta-bot-pelak-proxy\single_instance.js:209:22
+2025-07-07T00:09:29.347Z [Instance 2] Error: TypeError: Cannot read properties of undefined (reading 'user')
+    at getResponseProp (C:\Users\VXZ\Downloads\insta-bot-pelak-proxy\insta-bot-pelak-proxy\src\index.js:711:19)
+    at graphqlQueryUsers (C:\Users\VXZ\Downloads\insta-bot-pelak-proxy\insta-bot-pelak-proxy\src\index.js:686:23)
+    at async safelyUnfollowUserList (C:\Users\VXZ\Downloads\insta-bot-pelak-proxy\insta-bot-pelak-proxy\src\index.js:1218:22)
+    at async C:\Users\VXZ\Downloads\insta-bot-pelak-proxy\insta-bot-pelak-proxy\single_instance.js:212:29
+2025-07-07T00:11:25.797Z [Instance 2] Cannot find text "ladymcbeth.rells" on page
+2025-07-07T00:11:25.797Z [Instance 2] Error: Error: User not found
+    at navigateToUserWithCheck (C:\Users\VXZ\Downloads\insta-bot-pelak-proxy\insta-bot-pelak-proxy\src\index.js:330:50)
+    at async navigateToUserAndGetData (C:\Users\VXZ\Downloads\insta-bot-pelak-proxy\insta-bot-pelak-proxy\src\index.js:435:5)
+    at async Instauto (C:\Users\VXZ\Downloads\insta-bot-pelak-proxy\insta-bot-pelak-proxy\src\index.js:1590:28)
+    at async C:\Users\VXZ\Downloads\insta-bot-pelak-proxy\insta-bot-pelak-proxy\single_instance.js:209:22
+2025-07-07T00:12:03.554Z [Instance 2] Cannot find text "ladymcbeth.rells" on page
+2025-07-07T00:12:03.554Z [Instance 2] Error: Error: User not found
+    at navigateToUserWithCheck (C:\Users\VXZ\Downloads\insta-bot-pelak-proxy\insta-bot-pelak-proxy\src\index.js:330:50)
+    at async navigateToUserAndGetData (C:\Users\VXZ\Downloads\insta-bot-pelak-proxy\insta-bot-pelak-proxy\src\index.js:435:5)
+    at async Instauto (C:\Users\VXZ\Downloads\insta-bot-pelak-proxy\insta-bot-pelak-proxy\src\index.js:1590:28)
+    at async C:\Users\VXZ\Downloads\insta-bot-pelak-proxy\insta-bot-pelak-proxy\single_instance.js:209:22
+2025-07-07T00:12:28.314Z [Instance 2] Error: Error: Attempted to use detached Frame '6949AF48BF82DC5D074D8D43960D1085'.
+    at CdpFrame.<anonymous> (C:\Users\VXZ\Downloads\insta-bot-pelak-proxy\insta-bot-pelak-proxy\node_modules\puppeteer-core\lib\cjs\puppeteer\util\decorators.js:107:23)
+    at CdpPage.$$ (C:\Users\VXZ\Downloads\insta-bot-pelak-proxy\insta-bot-pelak-proxy\node_modules\puppeteer-core\lib\cjs\puppeteer\api\Page.js:315:43)
+    at Instauto (C:\Users\VXZ\Downloads\insta-bot-pelak-proxy\insta-bot-pelak-proxy\src\index.js:1400:16)
+    at async C:\Users\VXZ\Downloads\insta-bot-pelak-proxy\insta-bot-pelak-proxy\single_instance.js:209:22
+2025-07-07T00:13:13.023Z [Instance 2] Error: Error: Attempted to use detached Frame '591C941E94AA666133B54E60C693ECBD'.
+    at CdpFrame.<anonymous> (C:\Users\VXZ\Downloads\insta-bot-pelak-proxy\insta-bot-pelak-proxy\node_modules\puppeteer-core\lib\cjs\puppeteer\util\decorators.js:107:23)
+    at CdpPage.$$ (C:\Users\VXZ\Downloads\insta-bot-pelak-proxy\insta-bot-pelak-proxy\node_modules\puppeteer-core\lib\cjs\puppeteer\api\Page.js:315:43)
+    at navigateToUser (C:\Users\VXZ\Downloads\insta-bot-pelak-proxy\insta-bot-pelak-proxy\src\index.js:316:41)
+    at async navigateToUserWithCheck (C:\Users\VXZ\Downloads\insta-bot-pelak-proxy\insta-bot-pelak-proxy\src\index.js:330:11)
+    at async navigateToUserAndGetData (C:\Users\VXZ\Downloads\insta-bot-pelak-proxy\insta-bot-pelak-proxy\src\index.js:435:5)
+    at async Instauto (C:\Users\VXZ\Downloads\insta-bot-pelak-proxy\insta-bot-pelak-proxy\src\index.js:1590:28)
+    at async C:\Users\VXZ\Downloads\insta-bot-pelak-proxy\insta-bot-pelak-proxy\single_instance.js:209:22
+2025-07-07T00:26:51.199Z [Instance 2] Cannot find text "ladymcbeth.rells" on page
+2025-07-07T00:26:51.199Z [Instance 2] Error: Error: User not found
+    at navigateToUserWithCheck (C:\Users\VXZ\Downloads\insta-bot-pelak-proxy\insta-bot-pelak-proxy\src\index.js:330:50)
+    at async navigateToUserAndGetData (C:\Users\VXZ\Downloads\insta-bot-pelak-proxy\insta-bot-pelak-proxy\src\index.js:435:5)
+    at async Instauto (C:\Users\VXZ\Downloads\insta-bot-pelak-proxy\insta-bot-pelak-proxy\src\index.js:1590:28)
+    at async C:\Users\VXZ\Downloads\insta-bot-pelak-proxy\insta-bot-pelak-proxy\single_instance.js:212:22
