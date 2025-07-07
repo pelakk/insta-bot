@@ -98,14 +98,30 @@ const options = {
       ? parseInt(process.env.MAX_LIKES_PER_DAY, 10)
       : 30,
 
-  followUserRatioMin: 0.0,
-  followUserRatioMax: 999999.0,
-  followUserMaxFollowers: 999999,
-  followUserMaxFollowing: 999999,
-  followUserMinFollowers: 0,
-  followUserMinFollowing: 0,
-  minimumLikeCount: 0,
-  maximumLikeCount: 999999,
+  followUserRatioMin: process.env.FOLLOW_USER_RATIO_MIN != null
+    ? parseFloat(process.env.FOLLOW_USER_RATIO_MIN)
+    : 1.2,
+  followUserRatioMax: process.env.FOLLOW_USER_RATIO_MAX != null
+    ? parseFloat(process.env.FOLLOW_USER_RATIO_MAX)
+    : 3.5,
+  followUserMaxFollowers: process.env.FOLLOW_USER_MAX_FOLLOWERS != null
+    ? parseInt(process.env.FOLLOW_USER_MAX_FOLLOWERS, 10)
+    : 5000,
+  followUserMaxFollowing: process.env.FOLLOW_USER_MAX_FOLLOWING != null
+    ? parseInt(process.env.FOLLOW_USER_MAX_FOLLOWING, 10)
+    : 1000,
+  followUserMinFollowers: process.env.FOLLOW_USER_MIN_FOLLOWERS != null
+    ? parseInt(process.env.FOLLOW_USER_MIN_FOLLOWERS, 10)
+    : 500,
+  followUserMinFollowing: process.env.FOLLOW_USER_MIN_FOLLOWING != null
+    ? parseInt(process.env.FOLLOW_USER_MIN_FOLLOWING, 10)
+    : 200,
+  minimumLikeCount: process.env.MINIMUM_POST_COUNT != null
+    ? parseInt(process.env.MINIMUM_POST_COUNT, 10)
+    : 2,
+  maximumLikeCount: process.env.MAXIMUM_POST_COUNT != null
+    ? parseInt(process.env.MAXIMUM_POST_COUNT, 10)
+    : 300,
 
   // Whether to like posts after following users (controlled by SHOULD_LIKE_POSTS env var)
   shouldLikePosts: process.env.SHOULD_LIKE_POSTS === "true",
